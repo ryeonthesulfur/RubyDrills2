@@ -1,0 +1,90 @@
+
+
+
+
+・クラス内にインスタンス変数を含むメソッドを定義して、外からそのメソッドを呼び出す記述方法（この場合、ゲッターメソッドの記述は不要）
+
+【PHP版】
+// Rubyのinitializeの代わりに__constructを使う。
+// 引数に型(string)とアクセス権(private)を書くことで、プロパティの定義と代入を同時に行える。
+
+class Article {
+  public function __construct(private string $author, private string $title, private string $content) {
+  }
+
+  public function show() {
+    echo "著者: {$this->author}\n";
+    echo "タイトル: {$this->title}\n";
+    echo "本文: {$this->content}\n";
+  }
+}
+
+$article = new Article("阿部", "PHPの素晴らしさについて", "Awesome PHP!");
+$article->show();
+
+
+
+  // PHPでは、クラスが持つ変数（プロパティ）を最初に宣言しておくのが基本です。
+  // PHP 8.0以降では、上記のように引数にアクセス権（privateなど）を書くだけで、
+        プロパティの定義と代入を省略できます。（Constructor Property Promotion）
+
+
+
+
+
+
+・クラス内に、外から呼び出せるようにするゲッターメソッドを記述して、外からゲッターメソッドを使ってインスタンス変数の内容を呼び出す方法
+
+【別解  PHP版：ゲッターを使って外から呼び出す場合の正しいコード】
+
+class Article {
+  // ① initialize の代わり（ここでインスタンス変数と同じものを作っている。）
+  public function __construct(private $author, private $title, private $content) {
+  }
+
+  // ② attr_reader の代わり（PHPには自動生成機能がないので手書きする）
+  public function getAuthor(): string { return $this->author; }     // 「$this->author」はインスタンス変数の名前
+  public function getTitle() { return $this->title; }
+  public function getContent() { return $this->content; }
+}
+
+// ③ Article.new の代わり
+$article = new Article("阿部", "PHPの素晴らしさについて", "Awesome PHP!");
+
+// ④ puts "著者: #{article.author}" の代わり
+// ※PHPでは変数を {} で囲み、メソッドなので () を忘れずにつけます
+
+echo "著者: {$article->getAuthor()}\n";
+echo "タイトル: {$article->getTitle()}\n";
+echo "本文: {$article->getContent()}\n";
+
+
+
+
+
+
+・クラス内に、外から呼び出して且つ、外から中身のデータを書き換えられるよう、ゲッターとセッターのメソッド記述をする。
+
+【PHP版】
+class Article {
+  // コンストラクタでプロパティを初期化
+  public function __construct(private string $author, private string $title, private string $content) {}
+
+  // ゲッター (読み取り用)
+  public function getAuthor(): string { return $this->author; }
+
+  // セッター (書き換え用)
+  public function setAuthor(string $newAuthor): void {
+     $this->author = $newAuthor; 
+    }
+}
+
+
+$article = new Article("阿部", "PHPの素晴らしさについて", "Awesome PHP!");
+
+echo "変更前の著者: {$article->getAuthor()}\n";         // ゲッターが呼ばれる
+$article->setAuthor("田中");                           // セッターを呼び出して値を書き換える
+
+echo "変更後の著者: {$article->getAuthor()}\n";
+
+

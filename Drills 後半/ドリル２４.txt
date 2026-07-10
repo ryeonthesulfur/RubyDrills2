@@ -1,0 +1,115 @@
+【Rubyドリル 問題 48 クラスとインスタンス】
+
+
+問題.1
+以下の仕様にしたがってコードを記述してください。
+
+・Personクラスはプロパティ name, ageを持っている。
+・StudentクラスはPersonクラスを継承している。
+・Studentクラスにはintroduceメソッドが定義されている。実行すると
+　「私の名前は◯◯です。◯歳です」と表示がされる。
+・Studentクラスのインスタンスを作成し、introduceメソッドを実行する。
+
+ヒント
+クラスの継承
+クラスの継承を活用すると、利用したいすべてのクラスを最初から作成することなく、共通する部分を受け継ぐことができます。
+以下のように使用します。
+
+
+class クラス名 < 継承したいクラス名（親クラス）
+
+end
+具体的には以下のように使うことができます。
+
+
+class Animal
+  def initialize(name)
+    @name = name
+  end
+end
+
+class Dog < Animal
+  def name
+    puts "名前は#{@name}です。"
+  end
+end
+
+pochi = Dog.new("ポチ")
+pochi.name
+
+
+ここでAnimalとDogの2つのクラスがあります。DogクラスはAnimalクラスの共通する部分を受け継ぎたいので、Dog < Animalとしました。
+これによってpochi.nameでメソッドを呼び出したときに、問題なく@nameにアクセスが可能になりました。
+
+
+class Person
+    attr_reader :name, :age
+
+    def initialize(name, age)
+        @name = name
+        @age = age
+    end
+
+end
+
+
+class Student < Person
+    def introduce
+        puts "私の名前は#{@name}です。#{@age}歳です"
+    end
+end
+
+student = Student.new("ゆき", 33)
+student.introduce
+
+
+
+
+
+【PHP版】
+
+class Person {
+    public function __construct(private $name, private $age) {
+    }
+
+    public function getName(): string {
+        return $this->name;
+    }
+    public function getAge(): int {
+        return $this->age;
+    }
+}
+
+class Student extends Person {
+    public function introduce() {
+        echo "私の名前は{$this->name}です。{$this->age}歳です\n";
+    }
+}
+
+$student = new Student("Yuki", 33);
+$student->introduce();
+
+
+
+-------------------------------------------
+class Sand {
+    public function __construct(private $thought, private $state) {
+    }
+
+    public function getThought(): string {
+        return $this->thought;
+    }
+    public function getState(): string {
+        return $this->state;
+    }
+    public function description() {
+        echo "{$this->thought}の状態は、{$this->state}です\n";
+    }
+}
+
+$mind_state = new Sand("砂の思考", "澱恢質");
+$mind_state->description();
+
+
+
+

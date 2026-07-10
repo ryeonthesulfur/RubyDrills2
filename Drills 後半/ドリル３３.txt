@@ -1,0 +1,65 @@
+【Rubyドリル 問題 60 クラスの定義問題】
+
+
+問題.1
+クラスを使用して以下の表示結果を出力するコードを記述しましょう。
+
+表示結果
+ワンワン
+わたしは犬です
+わたしの名前はマロンで種類はトイプードルです
+
+
+class Dog
+attr_reader :name, :dog_type
+    @@type = "犬"
+
+def initialize(name, dog_type)
+    @name = name
+    @dog_type = dog_type
+end
+
+def self.say
+    puts "ワンワン"
+end
+
+def say_type
+    puts "わたしは#{@@type}です。"
+end
+
+def self_introduction
+    puts "わたしの名前は#{@name}で種類は#{@dog_type}です。"
+end
+end
+
+pochi = Dog.new("マロン", "トイプードル")
+Dog.say
+pochi.say_type
+pochi.self_introduction
+
+
+
+
+【PHP版】
+
+class Dog {
+    private static $type = "犬";
+    public function __construct(private $name, private $dog_type) {}
+
+    public static function say() {
+        echo "ワンワン\n";
+    }
+
+    public function say_type() {
+        echo "わたしは" . self::$type . "です。\n";
+    }
+
+    public function self_introduction() {
+        echo "わたしの名前は{$this->name}で種類は{$this->dog_type}です。\n";
+    }
+}
+
+$pochi = new Dog('マロン', 'トイプードル');
+Dog::say();
+$pochi->say_type();
+$pochi->self_introduction();

@@ -1,0 +1,140 @@
+【Rubyドリル 問題 15 繰り返し処理のプログラム作成】
+
+
+
+問題.1
+ユーザーに数字を入力してもらい、その数の回数だけHello!と表示させるコードを記述してください。
+
+雛形
+def output()
+end
+
+puts "何回表示させますか？"
+
+output()
+
+
+【Ruby版】
+
+def output(input)
+  input.times do |i|
+    puts "Hello!"
+  end
+end
+
+puts "何回表示させますか？"
+
+output(gets.to_i)
+
+
+
+【PHP版】
+
+// 以前のコードにいくつか構文エラーがありましたので修正しました。
+// 1. for文の変数は $i のように $ が必要です。
+// 2. 5回表示させたい場合、ループは 0 から 4 までなので、$i < $count とします。
+// 3. fgetsで受け取った値は intval() で整数に変換するのが安全です。
+
+function output($count) {
+    for ($i = 0; $i < $count; $i++) {
+        echo "Hello!\n";
+    }
+}
+
+echo "何回表示させますか？\n";
+$input = intval(fgets(STDIN));
+output($input);
+
+
+
+-------------------------------------------------------------------------------------------------------------------------------------
+
+Y_Rubyドリル 問題 16 インスタンスの生成
+
+
+
+問題.1
+クラスFruitを以下の仕様で定義してください。
+
+
+インスタンス名      名前        価格
+apple.          りんご.       120
+orange.         オレンジ.     200
+strawberry.     いちご.       60
+
+
+インスタンス変数
+
+name
+price
+
+
+クラスメソッド
+fresh.         「採れたて新鮮な野菜です。」
+
+メソッド名.     処理
+initialize.   引数で名前と価格を渡し、インスタンス変数nameとpriceに代入
+introduce.    「【】は【】円です」と出力
+
+
+# 3つのインスタンスを生成してください
+# クラスメソッドを呼び出し、「採れたて新鮮な果実です」と表示してください
+# インスタンス毎にインスタンスメソッドを呼び出し、「【名前】は【価格】円です」と表示してください
+
+
+[Ruby版]
+class Fruit
+
+def self.fresh
+  # 問題文のタイポを修正しました (野菜 -> 果実)
+  puts "採れたて新鮮な果実です。"
+end
+
+ def initialize(name, price)
+   @name = name
+   @price = price
+ end
+
+ def introduce
+   puts "#{@name}は#{@price}円です"
+ end
+
+end
+
+apple = Fruit.new("りんご", 120)
+orange = Fruit.new("オレンジ", 200)
+strawberry = Fruit.new("いちご", 60) 
+
+Fruit.fresh
+apple.introduce
+orange.introduce
+strawberry.introduce
+
+
+
+
+【PHP版】
+
+class Fruit {
+    // Rubyのクラスメソッドは、PHPでは `static` をつけて「静的メソッド」として定義します。
+    public static function fresh() {
+        echo "採れたて新鮮な果実です。\n";
+    }
+
+    public function __construct(private string $name, private int $price) {
+    }
+
+    public function introduce() {
+        echo "{$this->name}は{$this->price}円です\n";
+    }
+}
+
+$apple = new Fruit("りんご", 120);
+$orange = new Fruit("オレンジ", 200);
+$strawberry = new Fruit("いちご", 60);
+
+// 静的メソッドは `クラス名::メソッド名()` で呼び出します。
+Fruit::fresh();
+$apple->introduce();
+$orange->introduce();
+$strawberry->introduce();

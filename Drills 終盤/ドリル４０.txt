@@ -1,0 +1,125 @@
+【Rubyドリル 問題 67 商品管理アプリケーションの作成1】
+
+
+問題.1
+以下の機能が満たされた、アプリケーションを作成してください。
+
+仕様
+・プログラムの実行を行うと、
+[0]商品をカートに入れる
+[1]カートを確認する
+[2]アプリを終了する
+という選択肢を表示し、ユーザーに入力を求め、その入力に従い以下のような処理を行う。
+
+・[2]でアプリケーションを終了するまで、投稿や閲覧が出来るように繰り返す。
+
+・[0]の処理
+1.商品名、値段、個数をユーザーに入力を行って貰う(入力された値の表示まで行う)。
+2.上記の値の保存を行う。
+
+・[1]の処理
+1.保存された全ての商品情報（商品名・値段・個数）を、商品ごとに表示する。また、全ての商品の合計金額を表示する。
+2.(買い物を続ける) メニューの表示まで戻る。
+
+・[2]の処理
+1.アプリケーションを終了する。
+
+注意
+正しく動作している箇所までが採点対象となるため、必ず動作確認しながら進めること。
+エラーはインターネットで調べるなりして解決すること
+エラーが出たままその先の実装をしないこと
+====================================================================================================
+====================================================================================================
+
+雛形
+def post_item(a_cart)
+cart = {}
+  puts "商品名を入力してください："
+  cart[:item] = gets.chomp
+  puts "値段を入力してください："
+  cart[:price] = gets.to_i
+  puts "個数を入力してください："
+  cart[:count] = gets.to_i
+
+ 
+
+  line = "---------------------------"
+
+# 入力された値（ハッシュオブジェクトで管理している値）と合計金額を表示する
+  puts "商品名 : #{cart[:item]}\n#{line}"
+  puts "値段 : #{cart[:price]}\n#{line}"
+  puts "個数 : #{cart[:count]}\n#{line}"
+  puts "合計金額 : #{cart[:price] * cart[:count]}\n#{line}"
+
+ a_cart << cart
+
+return a_cart
+
+end
+
+def check_items(a_cart)
+ total_price = 0
+ line = "---------------------------"
+    a_cart.each do |cart|
+    puts "#{cart[:item]}/#{cart[:price]}/#{cart[:count]}\n#{line}"
+    total_price += cart[:price] * cart[:count]
+    end
+
+  puts "合計金額 : #{total_price}"
+end
+
+
+def end_program
+  exit
+end
+
+def exception
+  puts "入力された値は無効な値です"
+end
+
+cart = []             # 配列オブジェクトcartの生成
+
+
+
+while true do
+  puts "商品数: #{cart.length}"
+  puts "[0]商品をカートに入れる"
+
+  unless cart.empty?
+    puts "[1]カートを確認する"
+  end
+
+  puts "[2]アプリを終了する"
+  input = gets.to_i
+
+  if input == 0 then
+    cart = post_item(cart)  
+  elsif input == 1 then
+    check_items(cart) 
+  elsif input == 2 then
+    end_program
+  else
+    exception
+  end
+end
+
+
+
+
+
+ヒント
+必要な知識
+
+ハッシュオブジェクト
+式展開
+配列オブジェクト
+引数
+each文
+条件分岐
+
+
+
+
+
+
+

@@ -1,0 +1,210 @@
+【Rubyドリル 問題 30 FizzBuzz問題応用】
+
+
+問題.1
+FizzBuzzという言葉遊びがあります。1から数を数えていく際に、それが3の倍数だったら「Fizz」, 5の倍数だったら「Buzz」と言う、というものです。
+ただし、15の倍数の時は「FizzBuzz」と言います。
+
+例） 1, 2, Fizz, 4, Buzz, Fizz ,,,,
+
+このFizzBuzzを再現できるメソッドを作成してください。
+ただし、いくつまでカウントするか、引数で指定できるものとします。
+
+雛形
+def fizzbuzz(max_num)
+  if 
+  elsif
+  elsif
+  else
+  end
+end
+
+puts 'いくつまで数えますか？'
+num = gets.to_i
+fizzbuzz(num)
+
+ヒント
+ 範囲を指定して繰り返し
+範囲を指定して繰り返しをする場合は、範囲演算子(..)を使用しましょう。
+以下のように使用します。
+
+1
+(開始する値..終了する値）
+具体的には以下のように使用できます。
+
+
+# 1～6までの範囲を指定して、繰り返し表示
+(1..6).each do |num|
+  puts num
+end
+
+
+
+def fizzbuzz(max_num)
+  (1..max_num).each do |num|
+  if (num % 3 == 0) && (num % 5 == 0)
+    puts "FizzBuzz"
+  elsif num % 3 == 0
+    puts "Fizz"
+  elsif num % 5 == 0
+    puts "Buzz"
+  else
+    puts num
+  end
+ end
+end
+
+
+puts 'いくつまで数えますか？'
+num = gets.to_i
+fizzbuzz(num)
+
+
+【PHP版】
+
+function fizzbuzz($max_num) {
+    for ($i = 1; $i <= $max_num; $i++) {
+        if ($i % 15 == 0) {
+            echo "FizzBuzz\n";
+        } elseif ($i % 3 == 0) {
+            echo "Fizz\n";
+        } elseif ($i % 5 == 0) {
+            echo "Buzz\n";
+        } else {
+            echo $i . "\n";
+        }
+    }
+}
+
+echo "いくつまで数えますか？\n";
+$num = (int)fgets(STDIN);
+fizzbuzz($num);
+
+------------------------------------------------------------------------------------------------
+【Rubyドリル 問題 31 2つの文字列の末尾に対して一致・不一致を判断するプログラムの実装】
+
+
+問題.1
+概要
+本ドリルでは、どちらかがもう一方の文字列の末尾にある場合はFalseを出力するプログラムを実装します。
+
+問題
+以下の要件を満たすend_otherメソッドを実装しましょう。
+
+メソッドの引数に、任意の2つの文字列を指定する。
+引数に指定された2つの文字列のうち、どちらかがもう一方の文字列の末尾にある場合は、Trueを出力する
+上記を満たせていない場合は、Falseを出力する
+入力された文字が大文字でも小文字でも、同一の文字として処理を行う
+
+雛形
+def end_other(a, b)
+end
+
+# 呼び出し例
+end_other('Hiabc', 'abc') 
+出力例
+end_other('Hiabc', 'abc') → True
+end_other('AbC', 'HiaBc') → True
+end_other(‘abc’, ‘HaIoBc’) → False
+
+ヒント
+sliceの範囲指定
+範囲を指定して要素を切り取る場合は、以下のように記述して使うことができます。
+
+
+# 要素を定義
+array = "Hiabc"
+
+#配列番号（インデックス番号）の-3から-1の範囲の文字列を切り取る
+array.slice(-3..-1)
+#=> abc
+downcase
+downcaseメソッドは、大文字を小文字に変換するメソッドです。
+
+ターミナル
+
+# 大文字を含んだ文字列を定義
+irb(main):001:0> name = "Hiabc"
+=> "Hiabc"
+
+# downcaseメソッドを使用し、小文字に変換
+irb(main):002:0> name.downcase
+=> “hiabc”
+
+
+
+
+
+【あなたの完成させたコード (slice版)】
+このコードは問題の要件をすべて満たしており、ロジックとして完全に正解です。
+
+def end_other_slice(a, b)
+  a_down = a.downcase
+  b_down = b.downcase
+  b_length = b_down.length
+  a_length = a_down.length
+  
+  if a_down.slice(-b_length..-1) == b_down
+    puts "True"
+  elsif b_down.slice(-a_length..-1) == a_down
+    puts "True"
+  else
+    puts "False"
+  end
+end
+
+
+
+【PHP版 (slice版)】
+
+function end_other_php_slice($a, $b) {
+    $a_down = strtolower($a);
+    $b_down = strtolower($b);
+    $b_length = strlen($b_down);
+    $a_length = strlen($a_down);
+
+    // substr($string, -length) で末尾から指定した長さの文字列を取得します
+    if (substr($a_down, -$b_length) === $b_down) {
+        echo "True\n";
+    } elseif (substr($b_down, -$a_length) === $a_down) {
+        echo "True\n";
+    } else {
+        echo "False\n";
+    }
+}
+
+
+
+# こちらは、プロの開発現場でよく使われる、よりシンプルで読みやすい書き方です。
+# あなたが組み立てたロジックを、Rubyが用意してくれた `end_with?` という一言で表現しています。
+
+def end_other_idiomatic(a, b)
+  a_lower = a.downcase
+  b_lower = b.downcase
+
+  if a_lower.end_with?(b_lower) || b_lower.end_with?(a_lower)
+    puts "True"
+  else
+    puts "False"
+  end
+end
+
+
+
+【PHP版 (str_ends_with版)】
+
+function end_other_php_idiomatic($a, b) {
+    $a_lower = strtolower($a);
+    $b_lower = strtolower($b);  // 文字列を小文字に変換
+
+    if (str_ends_with($a_lower, $b_lower) || str_ends_with($b_lower, $a_lower)) {
+        echo "True\n";
+    } else {
+        echo "False\n";
+    }
+}
+
+# 呼び出し例
+end_other_idiomatic('Hiabc', 'abc') 
+end_other_idiomatic('AbC', 'HiaBc')
+end_other_idiomatic('abc', 'HaIoBc')

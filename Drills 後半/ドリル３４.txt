@@ -1,0 +1,138 @@
+【Rubyドリル 問題 61 車両管理アプリケーションの作成１】
+
+
+問題.1
+以下の仕様を満たすアプリケーションを作成しましょう。
+
+仕様
+・プログラムの実行を行うと、
+[0]データの登録
+[1]データの確認
+[2]プログラムの終了
+という選択肢を表示し、ユーザーに入力を求め、その入力に従い以下のような処理を行う。
+
+・[0]の処理
+1.車種、1Lあたりの走行可能距離(km/l)、乗車人数の入力をユーザーに入力を行って貰う
+2.上記の値の保存を行う
+
+・[1]の処理
+1.保存した情報から番号と名前で一覧を表示し、見たい車種の番号の入力を求める
+2.入力された個別の車種の名前、1Lあたりの走行可能距離(km/l)、乗車人数の表示を行う
+
+・[2]の処理
+1.アプリケーションの終了
+
+・[2]でアプリケーションを終了するまで、投稿や閲覧が出来るように繰り返す
+
+注意
+正しく動作している箇所までが採点対象となるため、必ず動作確認しながら進めること
+エラーはインターネットで調べるなりして解決すること
+エラーが出たままその先の実装をしないこと
+必要な知識
+
+each_with_index
+使用すると、配列のインデックス番号(配列の要素番号)が取得できる
+
+
+
+
+
+
+
+
+def register_data(train_info)
+    puts "車種を入力してください。"
+    train_name = gets.chomp
+    puts "走行可能距離を入力してください。"
+    length = gets.to_i
+    puts "乗車人数を入力してください。"
+    passengers = gets.to_i
+
+info = { train_name: train_name, length: length, passengers: passengers }
+train_info << info
+end
+
+def confirm_data_list(train_info)
+    train_info.each_with_index do |info, index|
+    puts "#{index + 1}: #{info[:train_name]}"
+    end
+
+    input = gets.to_i
+    confirm_data(train_info[input - 1])
+end
+
+
+def confirm_data(train_info)
+    puts "車種： #{train_info[:train_name]}"
+    puts "走行可能距離： #{train_info[:length]}"
+    puts "乗車人数： #{train_info[:passengers]}"
+end
+
+
+
+data = []
+while true
+puts "[0]データの登録"
+puts "[1]データの確認"
+puts "[2]プログラムの終了"
+input = gets.to_i
+
+if input == 0
+    register_data(data)
+elsif input == 1
+    confirm_data_list(data)
+elsif input == 2
+    exit
+else
+    puts "無効な値です。"
+end
+end
+
+
+
+【PHP版】
+
+function register_data(&$train_info) {
+    echo "車種を入力してください。\n";
+    $train_name = trim(fgets(STDIN));
+    echo "走行可能距離を入力してください。\n";
+    $length = trim(fgets(STDIN));
+    echo "乗車人数を入力してください\n";
+    $passengers = intval(fgets(STDIN));
+
+$info = [ 'train_name' => $train_name, 'length' => $length, 'passengers' => $passengers ];
+$train_info[] = $info;
+}
+
+function confirm_data_list($train_info) {
+    foreach($train_info as $index => $info) {
+        echo ($index + 1) . ": {$info['train_name']}\n";
+    }
+
+    $input = intval(trim(fgets(STDIN)));
+    confirm_data($train_info[$input - 1]);
+}
+
+function confirm_data($info) {
+    echo "車種： {$info['train_name']}\n";
+    echo "走行可能距離： {$info['length']}\n";
+    echo "乗車人数： {$info['passengers']}\n";
+}
+
+$train_info = [];
+while (true) {
+echo "[0]データの登録\n";
+echo "[1]データの確認\n";
+echo "[2]プログラムの終了\n";
+$input = intval(trim(fgets(STDIN)));
+
+if ($input == 0) {
+    register_data($train_info);
+} elseif ($input == 1) {
+    confirm_data_list ($train_info);
+} elseif ($input == 2) {
+    exit();
+} else {
+   echo "無効な値です。\n";
+}
+}

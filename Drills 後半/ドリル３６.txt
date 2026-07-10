@@ -1,0 +1,82 @@
+【Rubyドリル 問題 63 車両管理アプリケーションの作成３】
+
+
+
+追加する仕様
+・[1]の処理
+入力された乗車人数に対して、あと何人乗ることが出来るのか、何人定員オーバーなのか出力を行う
+
+
+
+def register_data(train_info)
+    puts "車種を入力してください。"
+    train_name = gets.chomp
+    puts "走行可能距離を入力してください。"
+    length = gets.to_i
+    puts "乗車人数を入力してください。"
+    passengers = gets.to_i
+
+info = { train_name: train_name, length: length, passengers: passengers }
+train_info << info
+end
+
+def confirm_data_list(train_info)
+    train_info.each_with_index do |info, index|
+        puts "#{index + 1}: #{info[:train_name]}"
+    end
+    puts "確認したい番号を入力してください。"
+    input = gets.to_i
+    confirm_data(train_info[input - 1])
+end
+
+def confirm_data(train_info)
+    puts "車種： #{train_info[:train_name]}"
+    puts "走行可能距離： #{train_info[:length]}"
+    puts "乗車人数： #{train_info[:passengers]}"
+
+    puts "これから走る距離(km/l)を入力してください。"
+    input_distance = gets.to_f
+
+    calculate_fuel_consumption(train_info, input_distance)
+
+    puts "これから乗車する人数を入力してください。"
+    input_passengers = gets.to_i
+
+    calculate_passengers(train_info, input_passengers)
+end
+
+def  calculate_fuel_consumption(train_info, distance)
+        fuel_consumption = distance / train_info[:length]
+        puts "その目的地までは、ガソリンを#{fuel_consumption.round(1)}L消費します。"
+end
+
+def calculate_passengers(train_info, input_passengers)
+
+    if input_passengers < train_info[:passengers]
+        puts "あと#{(train_info[:passengers] - input_passengers).abs}人座れます。"
+    elsif input_passengers > train_info[:passengers]
+        puts "#{(train_info[:passengers] - input_passengers).abs}人定員オーバーです。"
+    else
+        puts "ピッタリです。"
+    end
+end
+
+
+
+train_info = []
+while true
+puts "[0]データの登録"
+puts "[1]データの確認"
+puts "[2]プログラムの終了"
+input = gets.to_i
+
+if input == 0
+    register_data(train_info)
+elsif input == 1
+    confirm_data_list(train_info)
+elsif input == 2
+    exit
+else
+    puts "無効な値です。"
+end
+end

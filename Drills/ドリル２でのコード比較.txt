@@ -1,0 +1,330 @@
+【ドリル２でのコード比較】
+
+
+＊＊＊パターン１【Ruby】＊＊＊
+
+class Article
+  def initialize(author, title, content)
+    @author = author
+    @title = title
+    @content = content
+  end
+
+  def show
+   puts "著者: #{@author}"
+   puts "タイトル: #{@title}"
+   puts "本文: #{@content}"
+  end
+end
+
+article = Article.new("阿部", "Rubyの素晴らしさについて", "Awesome Ruby!")
+article.show
+
+
+
+【別解】
+class Article
+attr_reader :author, :title, :content
+
+  def initialize(author, title, content)
+    @author = author
+    @title = title
+    @content = content
+  end
+end
+
+article = Article.new("阿部", "Rubyの素晴らしさについて", "Awesome Ruby!")
+puts "著者: #{article.author}"
+puts "タイトル: #{article.title}"
+puts "本文: #{article.content}
+
+
+-------------------------------------------------------------------------------------------------------------------------------------
+＊＊＊パターン１【PHP版】＊＊＊
+
+// Rubyのinitializeの代わりに__constructを使う。
+// 引数に型(string)とアクセス権(private)を書くことで、プロパティの定義と代入を同時に行える。
+
+class Article {
+  public function __construct(private string $author, private string $title, private string $content) {
+  }
+
+  
+  public function show() {
+    echo "著者: {$this->author}\n";
+    echo "タイトル: {$this->title}\n";
+    echo "本文: {$this->content}\n";
+  }
+}
+
+$article = new Article("阿部", "PHPの素晴らしさについて", "Awesome PHP!");
+$article->show();
+
+
+
+
+【別解  PHP版：ゲッターを使って外から呼び出す場合の正しいコード】
+
+class Article {
+  // ① initialize の代わり（ここでインスタンス変数と同じものを作っている。）
+  public function __construct(private string $author, private string $title, private string $content) {
+  }
+
+  // ② attr_reader の代わり（PHPには自動生成機能がないので手書きする）
+  public function getAuthor() { return $this->author; }
+  public function getTitle() { return $this->title; }
+  public function getContent() { return $this->content; }
+}
+
+// ③ Article.new の代わり
+$article = new Article("阿部", "PHPの素晴らしさについて", "Awesome PHP!");
+
+
+// ④ puts "著者: #{article.author}" の代わり
+// ※PHPでは変数を {} で囲み、メソッドなので () を忘れずにつけます
+
+echo "著者: {$article->getAuthor()}\n";
+echo "タイトル: {$article->getTitle()}\n";
+echo "本文: {$article->getContent()}\n";
+
+
+-------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------------
+＊＊＊パターン２: attr_accessor【Ruby】＊＊＊
+
+【Ruby版】
+
+class Article
+  attr_accessor :author, :title, :content
+
+  def initialize(author, title, content)
+    @author = author
+    @title = title
+    @content = content
+  end
+end
+
+article = Article.new("阿部", "Rubyの素晴らしさについて", "Awesome Ruby!")
+puts "変更前の著者: #{article.author}"
+article.author = "田中"
+puts "変更後の著者: #{article.author}"
+
+
+
+【Ruby版：attr_accessorを使わない手書きバージョン】
+
+class Article
+
+  def author
+    @author
+  end
+
+  def author=(new_author)
+    @author = new_author
+  end
+
+  def initialize(author, title, content)
+    @author = author
+    @title = title
+    @content = content
+  end
+end
+
+article = Article.new("阿部", "Rubyの素晴らしさについて", "Awesome Ruby!")
+puts "変更前の著者: #{article.author}"
+article.author = "田中"
+puts "変更後の著者: #{article.author}"
+
+
+
+【PHP版】
+class Article {
+  // コンストラクタでプロパティを初期化
+  public function __construct(private string $author, private string $title, private string $content) {}
+
+  // ゲッター (読み取り用)
+  public function getAuthor(): string { 
+    return $this->author; 
+    }
+
+  // セッター (書き換え用)
+  public function setAuthor(string $newAuthor): void {
+     $this->author = $newAuthor; 
+    }
+}
+
+$article = new Article("阿部", "PHPの素晴らしさについて", "Awesome PHP!");
+
+echo "変更前の著者: {$article->getAuthor()}\n";         // ゲッターが呼ばれる
+$article->setAuthor("田中");                           // セッターを呼び出して値を書き換える
+
+echo "変更後の著者: {$article->getAuthor()}\n";
+
+
+
+$article->setAuthor("田中");    の「"田中"」が、
+ public function setAuthor(string $newAuthor):  の「(string $newAuthor)」に引数として渡される
+$this->author   が書き換わる。
+
+ゲッターは呼び出すだけなので「（）」の中には何も渡されない。ただ中身が呼び出されるだけ。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+3.  内部的にセッターが呼ばれ、`$tweet->text = ...`、`$tweet->user_id = ...` のように値がセットされる。
+4.  最後に、完成したインスタンスがデータベースに保存される。
+
+
+-------------------------------------------------------------------------------------------------------------------------------------
+
+【`Tweet::create`の裏側のコード（簡易版）】
+
+`Tweet::create([...])`の裏側で動いている仕組みを、簡易的なPHPクラスで再現すると以下のようになります。
+
+```php
+// Laravelのモデルを簡易的に再現したクラス
+class Tweet {
+    // モデルが持つプロパティ（DBのカラムに相当）
+    public ?string $text = null;
+    public ?string $image = null;
+    public ?int $user_id = null;
+
+    /**
+     * createメソッド。
+     * 配列を受け取り、インスタンス生成からDB保存までを一括で行う。
+     * このように、自分自身のインスタンスを生成して返すメソッドを「ファクトリメソッド」と呼びます。
+     */
+    public static function create(array $attributes): static
+    {
+        // 1. まずは自分自身の空のインスタンスを作る
+        $tweet = new static();
+
+        // 2. 渡された配列のデータで、インスタンスのプロパティを埋める
+        $tweet->fill($attributes);
+
+        // 3. データベースに保存する
+        $tweet->save();
+
+        // 4. 完成したインスタンスを返す
+        return $tweet;
+    }
+
+
+
+
+
+    /**
+     * プロパティを配列で一括設定するメソッド。
+     * これが「裏側でセッターが呼ばれている」の正体です。
+     */
+    public function fill(array $attributes): void
+    {
+        // 配列をループで回す
+        foreach ($attributes as $key => $value) {
+            // $keyには'text'や'user_id'が、
+            // $valueにはその値が入る。
+            // `$this->{$key}` という書き方で、プロパティ名を動的に指定できる。
+            // 例: $this->text = '投稿内容';
+            $this->{$key} = $value;
+        }
+    }
+
+    /**
+     * データベースに保存するフリをするメソッド
+     */
+    public function save(): void
+    {
+        echo "--- データベースに保存処理が実行されました ---\n";
+    }
+}
+
+// 実行例
+$requestData = [
+    'text' => 'Laravelは便利！',
+    'image' => null,
+    'user_id' => 1,
+];
+
+$newTweet = Tweet::create($requestData);
+
+echo "作成されたTweetオブジェクトの中身:\n";
+print_r($newTweet);
+```
+
+このコードの`fill`メソッドが、Rubyで学んだ「ハッシュで初期化する`initialize`」と全く同じ役割を果たしていることがわかります。
+フレームワークは、こうした基本の組み合わせで成り立っているのです。
+
+
+
+
+
+
+このコードの`fill`メソッドが、Rubyで学んだ「ハッシュで初期化する`initialize`」と全く同じ役割を果たしていることがわかります。
+フレームワークは、こうした基本の組み合わせで成り立っているのです。
+
+
+-------------------------------------------------------------------------------------------------------------------------------------
+
+【応用2】コントローラーからビューへデータを渡し、フォームに埋め込む
+
+「そしてビューのファイルでこいつ（$requestData）を入力フォームに埋め込んでおけばいいわけ？」
+
+はい、その通りです。それがMVCの最終的なデータの流れになります。
+
+1.  **コントローラー**が、データベースから特定のデータ（例: ID=1のTweet）を取得します。
+2.  コントローラーは、取得したオブジェクトをビューファイルに渡します。
+3.  **ビュー**は、渡されたオブジェクトのプロパティを使って、フォームの初期値を設定します。
+
+これをLaravelのコードで見てみましょう。
+
+### コントローラー (`TweetsController.php`)
+```php
+public function edit($id)
+{
+    // 1. データベースから編集したいTweetを探す
+    $tweet = Tweet::findOrFail($id);
+
+    // 2. 探した$tweetオブジェクトを'tweets.edit'ビューに渡す
+    return view('tweets.edit', ['tweet' => $tweet]);
+}
+```
+
+### ビュー (`resources/views/tweets/edit.blade.php`)
+```html
+{{-- 3. コントローラーから渡された$tweetオブジェクトのtextプロパティを、textareaの中に表示する --}}
+<textarea name="text">{{ $tweet->text }}</textarea>
+```
+
+このように、コントローラーで用意したデータオブジェクトを、ビューでフォームの初期値として埋め込む、という連携で編集画面は作られています。
+
+
+
+
+`['tweet' => $tweet]` は、「ビューファイルの中では `$tweet` という名前の変数で、このデータを扱ってくださいね」という意味の**荷札（ラベル）**です。
+
+・`'tweet'` (左側): ビューファイル内で使われる**変数名**になります。
+・`$tweet` (右側): 実際にビューに渡される**データ本体（オブジェクト）**です。
+
+この荷札のおかげで、ビューファイル（`edit.blade.php`）では `$tweet->text` のように、コントローラーから渡されたオブジェクトにアクセスできるのです。

@@ -1,0 +1,106 @@
+【Rubyドリル 問題 34 特定の数値の個数を算出するプログラムの実装】
+
+
+問題.1
+概要
+本ドリルでは、複数の数字が格納されている配列に、「9」が何個含まれているかを出力するプログラムを実装します。
+
+問題
+以下の要件を満たすarray_count9メソッドを実装しましょう。
+
+配列の中の数字に対して、9の個数を数える
+数えた9の個数を出力する
+
+
+雛形
+def array_count9(nums)
+  # 処理を記述
+end
+
+# 呼び出し例
+array_count9([1, 2, 9]) 
+出力例
+array_count9([1, 2, 9]) → 配列の中には9が1個です
+array_count9([1, 9, 9]) → 配列の中には9が2個です
+array_count9([1, 9, 9, 3, 9]) → 配列の中には9が3個です
+
+ヒント
+countメソッドを使用しましょう。
+
+count
+countメソッドは、引数に指定した数字に一致するものの個数を数え、その結果を返すメソッドです。
+
+
+
+ary = [1, 2, 4, 2]
+
+ary.count(2)
+ # => 2
+
+
+【Ruby版】
+
+def array_count9(nums)
+  puts "配列の中には9が#{nums.count(9)}個です"
+end
+
+
+# 呼び出し例
+array_count9([1, 2, 9]) 
+
+
+
+【PHP版】
+
+function array_count9($nums) {
+    $count = count(array_keys($nums, 9));
+    echo "配列の中には9が{$count}個です";
+}
+
+
+
+
+----------------------------------------------
+【Y_Rubyドリル 問題 35 if,else問題】  難しい
+
+問題.1
+2桁の正の整数を入力します。その整数が、
+10の倍数（10,20,30...）からの差が
+2以内であるときはTrue
+それ以外はFalseと出力するメソッドを作りましょう。
+
+出力例：
+near_ten(12)→True
+near_ten(17)→False
+near_ten(19)→True
+
+
+def near_ten(num)
+  # 処理を記述
+end
+
+# 呼び出し例
+near_ten(12)
+near_ten(17)
+near_ten(19)
+
+
+
+def near_ten(num)
+  if num % 10 <= 2 || num % 10 >= 8
+    puts "True"
+  else
+    puts "False"
+  end
+end
+
+
+# 呼び出し例
+near_ten(12)
+near_ten(17)
+near_ten(19)
+
+----------------------------------------------
+
+
+

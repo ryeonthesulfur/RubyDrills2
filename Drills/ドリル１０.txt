@@ -1,0 +1,123 @@
+【Y_Rubyドリル 問題 21 if,else問題】
+
+
+
+
+問題.1
+概要
+本ドリルでは、指定された範囲の数値によって処理が異なるプログラムを実装します。
+
+問題
+以下の要件を満たすparrot_troubleメソッドを実装しましょう。
+
+最近、あなたはオウムを飼いはじめました。しかし、近隣から「夜にオウムの鳴き声がうるさい」と苦情がくるようになりました。
+あなたはこれをシステムで解決しようと考え、次のようなプログラムの要件を考えました。
+
+第一引数にオウムが鳴く場合はtrueを指定し、鳴かないfalseを指定する
+第二引数には時間を指定する（ただし、「分」は考えないものとする）
+20時から翌朝7時までの間にオウムが鳴いた場合は「NG」と出力する（20時と7時は含まれない）
+上記以外の場合は「OK」と出力する
+
+
+雛形
+def parrot_trouble(talking, hour)
+  if talking && ( hour < 7 || hour > 20 )
+    puts "NG"
+  else
+    puts "OK"
+  end
+end
+
+
+# 呼び出し例
+parrot_trouble(true, 6)
+
+
+【PHP版】
+
+```php
+function parrot_trouble($talking, $hour) {
+    if ($talking && ($hour < 7 || $hour > 20)) {
+        echo "NG\n";
+    } else {
+        echo "OK\n";
+    }
+}
+
+// 呼び出し例
+parrot_trouble(true, 6);   //-> NG
+parrot_trouble(true, 7);   //-> OK
+parrot_trouble(false, 6);  //-> OK
+parrot_trouble(false, 7);  //-> OK
+```
+
+Rubyの `true` はPHPでも同じ `true` として扱え、条件を組み合わせる論理演算子 `&&` (AND) や `||` (OR) も全く同じように使えます。
+そのため、RubyのロジックをほぼそのままPHPで書くことができます。
+
+
+出力例
+parrot_trouble(true, 6) → NG
+parrot_trouble(true, 7) → OK
+parrot_trouble(false, 6) → OK
+parrot_trouble(false, 7) → OK
+
+
+--------------------------------------------------------------------------------------------------------
+Y_Rubyドリル 問題 22 偶数値の取得
+
+問題
+配列にある値の中から偶数の数をカウントして出力するメソッドを作りましょう。
+
+出力例：
+count_evens([2, 1, 2, 3, 4]) → 3
+count_evens([2, 2, 0]) → 3
+count_evens([1, 3, 5]) → 0
+
+ヒント
+even?というメソッドを使いましょう。
+
+even?メソッド
+Rubyが元々用意している、対象の数値が偶数かどうかを判断するメソッドです。
+対象の要素の値が偶数であれば真を返し、そうでない場合は偽を返します。
+
+even?メソッドの詳細は公式リファレンスを確認しましょう。
+
+
+10.even?
+#=> true
+
+5.even?
+#=> false
+
+
+【Ruby版】
+
+def count_evens(nums)
+   count = 0
+   nums.each do |n|
+     if n.even?
+      count += 1
+     end
+   end
+   puts count
+end 
+
+count_evens([2, 1, 2, 3, 4])
+
+
+
+
+【PHP版】
+
+function count_evens($nums) {
+    $count = 0;
+    forEach ($num as $n) {
+        if ($n % 2 == 0) {
+            $count += 1;
+        }
+    }
+    echo $count . "\n";
+}
+
+
+

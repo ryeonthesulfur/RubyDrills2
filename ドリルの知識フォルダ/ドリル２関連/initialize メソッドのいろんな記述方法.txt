@@ -1,0 +1,95 @@
+【色々なinitialize メソッドの記述方法】 
+
+
+いつもの書き方。
+セッターの役割も initialize メソッドの中で担っている状態で、インスタンス生成と同時にデータをセットする記述方法。
+
+
+  def initialize(author, title, content)
+    @author = author
+    @title = title
+    @content = content
+  end
+
+
+  article = Article.new("阿部", "Rubyの素晴らしさについて", "Awesome Ruby!")
+
+
+
+------------------------------------------------------------------------------------------------------
+【上記の分解版】
+
+  initialize メソッドを、インスタンス生成の起爆点（「.new」）となる役割だけ（空の状態、セッターを分離させてある状態）にして、
+  後から「article.author = "阿部"」などして、セッターを呼び出してデータをセットする記述方法。
+
+  セッターを後から呼んでそこでデータセットするので、initialize で引数を受け取る必要がない。そもそも空なので仮引数を書いたところで何もできない。
+  セッターを呼ぶためには、ゲッターメソッドが使えないといけないので、こちらも忘れずに記述する。
+
+
+  def author
+    @author
+  end
+
+
+  def author=(new_author)
+   @author = new_author
+  end
+
+
+  def initialize
+  end
+end
+
+article = Article.new
+
+article.author = "阿部"
+article.title = "Rubyの素晴らしさ"
+article.content = "Awesome Ruby!"
+
+
+
+------------------------------------------------------------------------------------------------------
+
+セッターを initialize メソッドから分離させてある状態で、且つ、セットするデータは一つの塊（params）にまとめておき、
+引数として仮引数「attributes = {}」に受け取り、メソッド内から「self.ゲッターメソッド = 引数[:キー]」で呼び出す記述方法。
+
+
+  def author=(new_author)
+   @author = new_author
+  end
+
+
+  def initialize(attributes = {})
+    self.author = attributes[:author]
+    self.title = attributes[:title]
+    self.content = attributes[:content]
+  end
+
+
+article_params = { author: "阿部", title: "Rubyの素晴らしさ", content: "Awesome Ruby!" }
+
+article = Article.new(article_params)
+
+
+
+
+■ Rails Controller (実際のコード)
+
+class ArticlesController < ApplicationController
+  def create
+    # createアクションが Article.new を呼び出し、paramsメソッドが返すハッシュを渡す
+    @article = Article.new(article_params)
+    # ...
+  end
+
+  private
+
+  def article_params
+    # paramsメソッド
+    params.require(:article).permit(:author, :title, :content)
+  end
+end
+
+
+このcreateアクションの裏側で、Article.new が呼び出されると、initialize メソッドが実行され、引数として article_params メソッドが返すハッシュが渡されます。
+initialize メソッド内では、self.author = attributes[:author] のように、セッターメソッドを呼び出して、ハッシュから値を取り出してインスタンス変数にセットしています。

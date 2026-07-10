@@ -1,0 +1,194 @@
+【解説】PHPのアクセス修飾子（public・private・protected）と $this・ゲッター
+※ Rubyとの比較付き
+
+==================================================
+
+## 1. アクセス修飾子とは？
+
+クラスの中のプロパティ（変数）やメソッドに対して、
+「どこから触れるか」を決めるルールのことです。
+
+PHPでは必ず書かないといけません。
+Rubyはデフォルトで public なので、意識する機会が少ないですが、PHPは明示が必要です。
+
+---
+
+## 2. 3種類のアクセス修飾子
+
+### ① `public`（パブリック）
+**「どこからでも触れる」**
+
+```php
+class Person {
+    public $name = "ゆき";
+
+    public function greet() {
+        echo "こんにちは！\n";
+    }
+}
+
+$p = new Person();
+echo $p->name;   //-> ゆき （クラスの外からOK）
+$p->greet();     //-> こんにちは！
+```
+
+---------------------------------------------------------------------------------------
+
+### ② `private`（プライベート）
+**「クラスの中からしか触れない」**
+
+```php
+class Person {
+    private $name = "ゆき";  // 外から直接触れない
+}
+
+$p = new Person();
+echo $p->name;  // エラー！外からは触れない
+```
+
+
+・外から見たい場合は**ゲッター**を作る：
+
+```php
+class Person {
+    private $name = "ゆき";
+
+    public function getName() {   // ゲッター（受付窓口）
+        return $this->name;
+    }
+}
+
+$p = new Person();
+echo $p->getName();  //-> ゆき （ゲッター経由ならOK）
+```
+
+---------------------------------------------------------------------------------------
+
+### ③ `protected`（プロテクテッド）
+**「クラス自身 + 継承した子クラスからは触れる」**
+
+```php
+class Person {
+    protected $name;  // 子クラスからはOK、外からはNG
+
+    public function __construct($name) {
+        $this->name = $name;
+    }
+}
+
+class Student extends Person {
+    public function introduce() {
+        echo "私は{$this->name}です\n";  // 継承してるのでOK
+    }
+}
+
+$s = new Student("ゆき");
+$s->introduce();   //-> 私はゆきです
+echo $s->name;     // エラー！外からは触れない
+```
+
+---
+
+## 3. 一覧比較表
+
+| 修飾子 | クラス内 | 子クラス | クラス外 |
+|:---|:---:|:---:|:---:|
+| `public` | ✅ | ✅ | ✅ |
+| `protected` | ✅ | ✅ | ❌ |
+| `private` | ✅ | ❌ | ❌ |
+
+---
+
+## 4. `$this` とは？
+
+**「自分自身のインスタンス」** を指すキーワードです。
+クラスの中で、自分のプロパティやメソッドを使いたい時に書きます。
+
+```php
+class Person {
+    private $name;
+
+    public function __construct($name) {
+        $this->name = $name;  // 「自分の $name に代入する」
+    }
+
+    public function greet() {
+        echo "私は{$this->name}です\n";  // 「自分の $name を使う」
+    }
+}
+```
+
+### RubyとPHPの対応関係
+
+| やりたいこと |          Ruby          | PHP |
+|:---|:---|:---|
+| 自分の変数にアクセス | `@name`         | `$this->name` |
+| 自分のメソッドを呼ぶ | `self.greet`    | `$this->greet()` |
+
+つまり **PHPの `$this->name` = Rubyの `@name`** です。
+
+---
+
+## 5. ゲッターとは？
+
+`private` で隠したプロパティを、外から**読めるようにする受付窓口メソッド**のことです。
+
+```php
+class Person {
+    private $name;
+    private $age;
+
+    public function __construct($name, $age) {
+        $this->name = $name;
+        $this->age  = $age;
+    }
+
+    // ゲッター
+    public function getName() {
+        return $this->name;
+    }
+    public function getAge() {
+        return $this->age;
+    }
+}
+
+$p = new Person("ゆき", 25);
+echo $p->getName();  //-> ゆき
+echo $p->getAge();   //-> 25
+```
+
+
+
+
+### RubyとPHPのゲッターの違い
+
+```ruby
+# Ruby：attr_reader で1行で自動生成できる
+class Person
+  attr_reader :name, :age
+  def initialize(name, age)
+    @name = name
+    @age  = age
+  end
+end
+```
+
+```php
+// PHP：attr_reader のような便利機能がないので手書きで作る
+class Person {
+    public function __construct(private $name, private $age) {}
+
+    public function getName() { return $this->name; }
+    public function getAge()  { return $this->age; }
+}
+```
+
+---
+
+## 6. まとめ
+
+- **public** → どこからでもOK（メソッドの公開に使う）
+- **private** → クラス内だけ（プロパティの保護に使う）
+- **protected** → クラス内 + 子クラスだけ（継承で使いたい時）
+- **`$this`** → 自分自身。Rubyの `@` と同じ感覚
+- **ゲッター** → privateを外から読むための窓口。Rubyの `attr_reader` に相当

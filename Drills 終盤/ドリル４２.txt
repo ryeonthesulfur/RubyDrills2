@@ -1,0 +1,109 @@
+【Rubyドリル 問題 69 クラスとインスタンスの問題】
+
+
+問題.1
+カロリー計算のプログラムをつくりましょう。以下のような仕様です。
+
+メニュー画面ではカロリーを入力か、カロリーの合計を見るか選べます
+カロリーを入力の場合、料理名とカロリーを入力します
+入力後はメニューに戻り、続けてカロリーを入力か、カロリーの合計を見るかを選べます
+カロリーの合計を見るを選んだら全ての料理名とカロリーを表示して、最後にカロリーの合計を表示します
+カロリーの合計を見たらプログラムを終了します
+メニュー画面
+
+
+ターミナル
+[0]:カロリーを入力する
+[1]:カロリーの合計を見る
+カロリー入力画面
+
+ターミナル
+料理名を入力してください:
+スパゲティ
+カロリーを入力してください:
+720
+カロリー合計表示画面
+
+ターミナル
+-----------------------------
+メロンパン  :430kcal
+スパゲティ  :720kcal
+バナナ  :80kcal
+-----------------------------
+カロリー合計  :1230kcal
+作ってもらうプログラムのひな形は以下です。
+
+-----------------------------
+-----------------------------
+今まで：
+cart = []          # メソッドの外に配列を用意
+post_item(cart)    # 引数として渡してた
+今回：
+
+
+class Dog
+  @@all_dogs = []  # クラス変数として配列を持つ
+
+  def initialize(name)
+    @@all_dogs << name  # 引数で渡さなくても直接追加できる
+  end
+end
+一番の違いは**「配列を引数で渡す必要がない」**こと。クラス変数はどのメソッドからでも @@ で直接アクセスできるので、
+今までみたいに register_data(data) みたいに引数で持ち回らなくていい。
+-----------------------------
+-----------------------------
+
+
+
+question3.rb
+
+  class Food
+    @@foods = []
+   attr_reader :name, :calory
+
+   def self.input
+    puts "料理名を入力してください"
+    name = gets.chomp
+    puts "カロリーを入力してください"
+    calory = gets.to_i
+
+    food = Food.new(name, calory)
+    @@foods << food
+   end
+
+   def self.show_all_calory
+    all_calory = 0
+    line =  "-----------------------------"
+    puts line
+
+    @@foods.each do |food|
+     puts "#{food.name} : #{food.calory}kcal"
+     all_calory += food.calory
+    end
+
+    puts line
+    puts "カロリー合計 : #{all_calory}kcal"
+   end
+
+    
+
+   def initialize(name, calory)
+    @name = name
+    @calory = calory
+   end
+end
+
+
+  while true do
+    puts "[0]:カロリーを入力する"
+    puts "[1]:カロリーの合計を見る"
+    input = gets.to_i
+
+    if input == 0
+      Food.input           # カロリーの入力
+    elsif input == 1
+      Food.show_all_calory # カロリーの合計を表示
+      exit
+    end
+  end
+

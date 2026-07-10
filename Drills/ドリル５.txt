@@ -1,0 +1,98 @@
+【Y_Rubyドリル 問題 11 特定の文字列を検知するプログラムの実装】
+
+
+
+
+問題
+以下の要件を満たすcheck_nameメソッドを実装しましょう。
+
+名前を入力すると「登録が完了しました」という文字列を出力すること
+名前の中にピリオド(.)がある場合は、「 "!エラー!記号は登録できません"」という文字列を出力すること
+名前の中に空白（半角のみ）がある場合は、「 "!エラー!空白は登録できません"」という文字列を出力すること
+※今回空白に関しては、半角スペースのみを考えることとします。
+
+雛形
+
+def check_name(str) 
+  # 処理を記述
+end
+
+puts "登録したい名前を入力してください(例)YamadaTaro"
+str = gets
+check_name(str) 
+
+
+出力例
+YamadaTaro → 登録が完了しました
+Yamada.Taro→!エラー!記号は登録できません
+Yamada Taro → !エラー!空白は登録できません
+
+
+------------------------------------------------------------------------------------------------------------------------
+
+このあたりが苦手とのこと、よくわかります。文字列の中に特定の文字があるかどうかを調べるのは、プログラミングの基本ですが、最初は戸惑いますよね。
+
+この問題のポイントは、文字列に特定の文字が含まれているかを調べるメソッドを知っているかどうかです。
+Rubyでは `include?` という便利なメソッドがあります。
+
+`'Yamada.Taro'.include?('.')` は `true` を返し、`'YamadaTaro'.include?('.')` は `false` を返します。
+
+これを使えば、`if`文で条件分岐が作れますね。
+もう一つのポイントは、`gets` です。`gets`で受け取った文字列には、エンターキーの「改行コード」も含まれてしまいます。これを `chomp` というメソッドで取り除いてあげると、より安全なプログラムになります。
+
+
+
+def check_name(str) 
+  if str.include?(".")
+    puts "!エラー!記号は登録できません"
+  elsif str.include?(" ")
+    puts "!エラー!空白は登録できません"
+  else
+    puts "登録が完了しました"
+  end
+end
+
+
+puts "登録したい名前を入力してください(例)YamadaTaro"
+str = gets.chomp
+check_name(str) 
+
+
+
+
+【PHP版】
+function check_name($str) {
+    // str_contains() で、文字列に特定の部分文字列が含まれているかチェックします (PHP 8.0以降)
+    if (str_contains($str, '.')) {
+        echo "!エラー!記号は登録できません\n";
+    } elseif (str_contains($str, ' ')) {
+        echo "!エラー!空白は登録できません\n";
+    } else {
+        echo "登録が完了しました\n";
+    }
+}
+
+echo "登録したい名前を入力してください(例)YamadaTaro\n";
+// fgets(STDIN)で標準入力を受け取り、trimで前後の空白や改行を削除します
+$str = trim(fgets(STDIN));
+check_name($str);
+
+
+
+
+function check_name($str) {
+    if (str_contains($str, '.')) {
+        echo "!エラー!記号は登録できません\n";
+    } elsif (str_contains($str, ' ')) {
+        echo "!エラー!空白は登録できません\n";
+    } else {
+        echo "登録が完了しました\n";
+    }
+}
+
+
+echo "登録したい名前を入力してください(例)YamadaTaro\n";
+
+$str = trim(fgets(STDIN));
+
+check_name($str);

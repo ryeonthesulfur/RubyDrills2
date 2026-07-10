@@ -1,0 +1,89 @@
+【Rubyドリル 問題 49 任意の文字列に特定の文字列が含まれているかを判別するプログラムの実装】
+
+概要
+本ドリル問題では、任意の文字列に特定の文字列が含まれているかを判別するプログラムを実装します。
+
+問題
+以下の要件を満たすinclude_cat_and_dog?メソッドを実装しましょう。
+
+任意の文字列にcatとdogの文字列が含まれている場合は、Trueを出力する
+任意の文字列にcatとdogの文字列が含まれていない場合は、Falseを出力する
+
+
+雛形
+def include_cat_and_dog?(str)
+  # 処理を記述
+end
+
+
+# 呼び出し例
+include_cat_and_dog?("catdog")
+出力例
+include_cat_and_dog?("catdog") → True
+include_cat_and_dog?("catcat") → False
+include_cat_and_dog?("1cat1cadodog") → True
+
+
+
+def include_cat_and_dog?(str)
+    if str.include?("cat") && str.include?("dog")
+        puts "True"
+    else
+        puts "False"
+    end
+end
+
+# 呼び出し例
+include_cat_and_dog?("catdog")
+
+
+
+
+---------------------
+【Rubyドリル 問題 50 if.else問題】
+
+問題.1
+以下の仕様を満たすアプリケーションを作成してください。
+
+仕様
+プログラムの実行を行うと、
+
+①「[0]:カロリーを表示する、[1]:終了する」という選択肢が表示され、数字を入力することができる
+② 0を入力すると「500kcal」と表示され、上記条件①が繰り返し実行される。
+③ 1を入力するとアプリケーションが終了する
+
+注意
+・正しく動作している箇所までが採点対象となるため、必ず動作確認しながら進めること。
+・エラーはインターネットで調べるなりして解決すること。
+・エラーが出たままその先の実装をしないこと。
+
+ヒント
+ while
+条件によって繰り返し処理を行う場合はwhileを使用しましょう。
+以下のように使用します。
+
+
+while 条件式 do
+  処理するアクション
+end
+もしプログラムを終了させず同じ処理を繰り返すループ処理を行う場合は、以下のようにします。
+
+
+while true do    
+  処理するアクション
+end
+ 上記の書き方だと無限ループするので、任意のタイミングで中断させたい場合はctrl+cを押しましょう。
+
+
+while true do
+puts "[0]:カロリーを表示する"
+puts "[1]:終了する"
+input = gets.to_i
+
+if input == 0
+    puts "500kcal"
+elsif input == 1
+    exit
+end
+
+---------------------------------------------

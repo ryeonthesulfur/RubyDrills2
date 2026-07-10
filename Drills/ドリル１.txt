@@ -1,0 +1,121 @@
+問題.1
+
+puts hash.keys
+puts hash.values
+
+上記のメソッドを実行した時に
+
+
+one
+two
+three
+1
+2
+3
+
+とターミナルに表示されるような変数hashを作成するためのコードをシンボルを使って記述してください。
+
+
+
+【回答】
+
+hash = { one: 1, two: 2, three: 3 }
+
+【PHP版】
+$hash = ['one' => 1, 'two' => 2, 'three' => 3];
+
+
+
+
+
+
+
+-------------------------------------------------------------------------
+問題.2
+配列の内部に、複数のユーザーの情報をハッシュとして持つ変数user_dataがあります。
+
+
+user_data = [
+ {user: {profile: {name: 'George'}}},
+ {user: {profile: {name: 'Alice'}}},
+ {user: {profile: {name: 'Taro'}}},
+]
+
+user_dataを利用して、全てのユーザーの名前だけが出力されるようにRubyでコーディングしてください。
+ただし、出力結果は次のようになるものとします。
+
+
+George
+Alice
+Taro
+
+
+【Ruby版】
+
+user_data.each do |u|
+  puts u[:user][:profile][:name]
+end
+
+
+
+【Ruby版  別解】
+
+user_data.each{ |u| puts u.dig(:user, :profile, :name)}
+
+
+
+
+【PHP版】
+// Rubyのハッシュは、PHPでは連想配列になります。キーを指定して値を取得します。
+foreach ($user_data as $u) {
+  echo $u['user']['profile']['name'] . PHP_EOL; // PHP_EOLは改行コードです。
+}
+
+
+
+
+
+
+
+
+問題.3
+国語が80点、英語が50点、数学が70点の場合のテストの平均点をターミナルに出力するプログラムを記述してください。
+
+条件1：このプログラムでは各教科の点数を変数を使って定義してください。
+条件2：出力結果は以下のようになるようにコードを書きましょう。
+
+ターミナル
+ ３教科の平均点は、◯点です。
+※◯の箇所には計算した平均点が入ります。
+
+出力にはputsを使います。putsのあとに半角スペースと出力したい文字列を続けることで、
+文字をターミナルに出力できます。
+
+puts "出力したい文字列"
+
+
+
+
+Japanese = 80
+English = 50
+Math = 70
+
+Ave = (Japanese + English + Math) / 3
+puts "３教科の平均点は、#{Ave}点です。"
+
+
+3. Rubyの「大文字始まり」の秘密 あなたが書いた Japanese = 80 のように、Rubyでは**「最初の一文字を大文字にする」と、
+普通の変数ではなく「定数（後から中身を変更できない箱）」として扱われる**という特殊なルールがあります。
+
+
+
+
+
+【PHP版】
+// ダブルクォーテーション("")で囲んだ文字列の中では、変数をそのまま展開できます。わかりやすく{}で囲むのが一般的です。
+$japanese = 80;
+$english = 50;
+$math = 70;
+
+$ave = intdiv($japanese + $english + $math, 3); // intdiv で整数の割り算（切り捨て）になります
+echo "３教科の平均点は、{$ave}点です。\n";
