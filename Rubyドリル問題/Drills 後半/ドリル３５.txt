@@ -1,0 +1,186 @@
+============================================================
+【このファイルで出てくる知識・メソッド・こつ まとめ】
+============================================================
+
+■ round メソッド（小数の四捨五入）
+  .round(1)                      → 小数点以下1桁に四捨五入
+  fuel_consumption.round(1)      → 計算結果をそのまま round に渡せる
+
+■ gets.to_f（小数入力）
+  input_distance = gets.to_f     → 距離など小数が必要な入力は to_f で受け取る
+  gets.to_i との使い分け         → 整数でいい値は to_i、小数が必要なら to_f
+
+■ 燃費計算パターン
+  fuel = distance / train_info[:length]
+                                 → 走行距離 ÷ km/L で消費ガソリン量を求める
+  ハッシュから値を取り出して計算  → [:length] でkm/Lを参照
+
+■ メソッド分離の流れ（4層構造）
+  register_data → データ登録
+  confirm_data_list → 一覧表示 → 番号入力
+  confirm_data → 詳細表示 → 走行距離入力
+  calculate_fuel_consumption → 燃費計算・出力
+  複数メソッドが連鎖するパターン → 前のメソッドが次のメソッドを呼ぶ
+
+■ PHP 対応メモ
+  .round(1)                      → PHP では round($value, 1)
+  gets.to_f                      → PHP では floatval(trim(fgets(STDIN)))
+  register_data(&$train_info)    → PHP では配列の参照渡しに & が必要
+
+============================================================
+
+【Rubyドリル 問題 62 車両管理アプリケーションの作成２】
+
+
+前回までの仕様
+・[0]の処理
+1.車種、1Lあたりの走行可能距離(km/l)、乗車人数の入力をユーザーに入力を行って貰う
+2.上記の値の保存を行う
+
+・[1]の処理
+1.保存した情報から番号と名前で一覧を表示し、見たい車種の番号の入力を求める
+2.入力された個別の車種の名前、1Lあたりの走行可能距離(km/l)、乗車人数の表示を行う
+
+・[2]の処理
+1.アプリケーションの終了
+
+・[2]でアプリケーションを終了するまで、投稿や閲覧が出来るように繰り返す
+
+追加する仕様
+・[1]の処理
+　これから走る距離(km)をユーザーに入力を行って貰う
+　これから走る距離に対して何L(リットル)ガソリンを消費するか出力を行う
+
+必要な知識
+roundメソッド
+
+引数で指定した桁数まで数値を四捨五入する
+
+
+
+
+
+def register_data(train_info)
+    puts "車種を入力してください。"
+    train_name = gets.chomp
+    puts "走行可能距離を入力してください。"
+    length = gets.to_i
+    puts "乗車人数を入力してください。"
+    passengers = gets.to_i
+
+info = { train_name: train_name, length: length, passengers: passengers }
+train_info << info
+end
+
+def confirm_data_list(train_info)
+    train_info.each_with_index do |info, index|
+        puts "#{index + 1}: #{info[:train_name]}"
+    end
+    puts "確認したい番号を入力してください。"
+    input = gets.to_i
+    confirm_data(train_info[input - 1])
+end
+
+
+def confirm_data(train_info)
+    puts "車種： #{train_info[:train_name]}"
+    puts "走行可能距離： #{train_info[:length]}"
+    puts "乗車人数： #{train_info[:passengers]}"
+
+    puts "これから走る距離(km/l)を入力してください。"
+    input_distance = gets.to_f
+
+    calculate_fuel_consumption(train_info, input_distance)
+end
+
+def  calculate_fuel_consumption(train_info, distance)
+        fuel_consumption = distance / train_info[:length]
+        puts "その目的地までは、ガソリンを#{fuel_consumption.round(1)}L消費します。"
+end
+
+
+train_info = []
+while true
+puts "[0]データの登録"
+puts "[1]データの確認"
+puts "[2]プログラムの終了"
+input = gets.to_i
+
+if input == 0
+    register_data(train_info)
+elsif input == 1
+    confirm_data_list(train_info)
+elsif input == 2
+    exit
+else
+    puts "無効な値です。"
+end
+end
+
+
+
+
+
+
+
+【PHP版】
+
+function register_data(&$train_info) {
+    echo "車種を入力してください。\n";
+    $train_name = trim(fgets(STDIN));
+    echo "走行可能距離を入力してください。\n";
+    $length = intval(trim(fgets(STDIN)));
+    echo "乗車人数を入力してください。\n";
+    $passengers = intval(trim(fgets(STDIN)));
+
+    $info = ['train_name' => $train_name, 'length' => $length, 'passengers' => $passengers];
+    $train_info[] = $info;
+}
+
+function confirm_data_list($train_info) {
+    foreach($train_info as $index => $info) {
+        echo ($index + 1) . ": {$info['train_name']}\n";
+    }
+    
+    echo "確認したい番号を入力してください。\n";
+
+    $input = intval(trim(fgets(STDIN)));
+    confirm_data($train_info[$input - 1]);
+}
+
+
+function confirm_data($train_info) {
+    echo "車種: {$train_info['train_name']}\n";
+    echo "走行可能距離: {$train_info['length']}\n";
+    echo "乗車人数: {$train_info['passengers']}\n";
+
+    echo "これから走る距離(km/l)を入力してください。\n";
+    $input_distance = intval(trim(fgets(STDIN)));
+
+    calculate_fuel_consumption($train_info, $input_distance);
+}
+
+
+function calculate_fuel_consumption($train_info, $distance) {
+        $fuel_consumption = $distance / $train_info['length'];
+        echo "その目的地までは、ガソリンを" . round($fuel_consumption, 1) . "L消費します。\n";
+}
+
+
+$train_info = [];
+while (true) {
+echo "[0]データの登録\n";
+echo "[1]データの確認\n";
+echo "[2]プログラムの終了\n";
+$input = intval(trim(fgets(STDIN)));
+
+if ($input == 0) {
+    register_data($train_info);
+} elseif ($input == 1) {
+    confirm_data_list ($train_info);
+} elseif ($input == 2) {
+    exit();
+} else {
+   echo "無効な値です。\n";
+}
+}

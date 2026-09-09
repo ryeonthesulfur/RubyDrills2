@@ -1,0 +1,191 @@
+============================================================
+## 目次 ― このファイルで出てくる知識・メソッド
+============================================================
+
+### メソッド
+  Float#ceil             小数点以下を切り上げ（例: 2.5.ceil → 3）
+  Array#sort             配列を昇順に並べ替えた新しい配列を返す
+  Array#push             末尾に要素を追加する
+  Array#shift            先頭の要素を取り出す（元の配列から削除）
+  Array#empty?           配列が空なら true を返す
+  String#include?        文字列が指定の文字を含むか true/false で返す
+  String#chars           文字列を1文字ずつの配列に分解する
+  each_with_index        各要素とインデックスを同時に取得するループ
+
+### 構文・記法
+  { } と &:の使い分け    処理を直接書く { } vs メソッド名を渡す &:メソッド名
+  unless                 「〜でなければ」の条件分岐
+  多重代入               xc, yc, r_1, r_2 = gets.split(" ").map(&:to_i)
+
+### 知識・パターン
+  フラグ変数パターン     has_valid_room = false → 条件で true にして unless で後処理
+  アナグラム判定         s.chars.sort == t.chars.sort（並べ替えて比較）
+  キューパターン         push で追加 → shift で先頭から取り出す（先入れ先出し）
+  ポイント・残高管理     条件で現金払い or ポイント払いを切り替えるパターン
+
+============================================================
+
+n, m = gets.split(" ").map(&:to_i)
+
+f = m.times.map { gets.to_i }   //運賃
+point = 0
+money = n
+
+f.each do |val|
+    
+    if val > point
+        money = n - val
+        point += (val * 0.1).ceil
+    elsif val <= point
+        point -= val
+    end
+    
+    puts "#{money} #{point}"
+    
+    
+    n = money
+end
+
+
+
+----------------------------------------------------------------------------
+
+xc, yc, r_1, r_2 = gets.split(" ").map(&:to_i)
+
+n = gets.to_i
+
+n.times do
+    
+    s, t = gets.split(" ").map(&:to_i)
+    
+    result = ((s - xc) * 2) + ((t - yc) * 2)
+    
+    if (result >= r_1 * 2) && (result <= r_2 * 2)
+        puts "yes"
+    else
+        puts "no"
+    end
+end
+
+----------------------------------------------------------------------------
+
+n = gets.to_i
+m = gets.to_i
+r = m.times.map { gets.to_i }
+
+has_valid_room = false
+
+r.each do |room|
+    
+    unless room.to_s.include?(n.to_s)
+        puts room
+        has_valid_room = true
+    end
+end
+
+puts "none" unless has_valid_room
+
+----------------------------------------------------------------------------
+----------------------------------------------------------------------------
+## { } と &: の使い分け
+
+map にブロックを渡す方法は2種類あり、どちらも同じ意味になる。
+
+  # { } でブロックを書く（中の処理を自分で書く）
+  m.times.map { gets.to_i }
+
+  # &: でシンボルを渡す（既存メソッドを名前で渡す）
+  gets.split(" ").map(&:to_i)
+
+-----
+
+&:to_i は { |x| x.to_i } の短縮形。この2つは同じ意味。
+
+  array.map { |x| x.to_i }
+  array.map(&:to_i)          # 上と同じ
+
+-----
+
+&: はメソッド名1つしか渡せないので、gets.to_i のような
+「2つのメソッドの組み合わせ」は { } に書くしかない。
+
+  &:to_i      # OK（メソッド1つ）
+  &:gets.to_i # NG（そんな書き方はない）
+
+-----
+
+まとめ：
+  既存のメソッド1つを呼ぶだけ → &:メソッド名
+  自分で処理を書く             → { }
+----------------------------------------------------------------------------
+----------------------------------------------------------------------------
+
+s = gets.chomp
+t = gets.chomp
+
+if s != t && s.chars.sort == t.chars.sort
+    puts "YES"
+else
+    puts "NO"
+end
+
+----------------------------------------------------------------------------
+----------------------------------------------------------------------------
+
+## sort メソッド
+
+配列の要素を昇順（小さい順）に並べ替えた新しい配列を返す。
+
+  [3, 1, 2].sort      #=> [1, 2, 3]
+  ["c", "a", "b"].sort  #=> ["a", "b", "c"]  文字列はアルファベット順
+
+### このコードでの使われ方
+
+  s.chars.sort == t.chars.sort
+
+s と t をそれぞれ1文字ずつに分解して、同じ順番に並べてから比較している。
+並べ替えることで「同じ文字が同じ数だけ含まれているか」を確認できる。
+
+  s = "abc" → s.chars → ["a","b","c"] → sort → ["a","b","c"]
+  t = "bca" → t.chars → ["b","c","a"] → sort → ["a","b","c"]
+  # 同じなので YES
+
+  s = "abc" → sort → ["a","b","c"]
+  t = "xyz" → sort → ["x","y","z"]
+  # 違うので NO
+----------------------------------------------------------------------------
+----------------------------------------------------------------------------
+
+n = gets.to_i
+
+input = gets.split(" ").map(&:to_s)
+
+curries = []
+rices = []
+results = []
+
+input.each_with_index do |char, i|
+    num = i + 1
+    if char == "C"
+        if rices.empty?
+            curries.push(num)
+        else
+            rice_num = rices.shift
+            results.push([num, rice_num])
+        end
+    else
+        if curries.empty?
+            rices.push(num)
+        else
+            curry_num = curries.shift
+            results.push([curry_num, num])
+        end
+    end
+end
+    
+    puts results.length
+    results.each do |c, r|
+        puts "#{c} #{r}"
+    end
+
+----------------------------------------------------------------------------

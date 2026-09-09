@@ -1,0 +1,195 @@
+============================================================
+【このファイルで出てくる知識・メソッド・こつ まとめ】
+============================================================
+
+■ バリデーションを while ループで繰り返す
+  while power > 100
+    puts "100以下の数字を入力してください"
+    power = gets.to_i
+  end
+  return power                  → 正常値になるまで再入力させる（if より while が適切）
+
+■ ランク分けパターン
+  total = punch + kick + jump   → 合計を出してから条件分岐
+  total >= 300 → "A"
+  total >= 200 → "B"            → 大きい方から順に判定する（小さい方から書くと誤判定）
+  total >= 100 → "C"
+  else → "D"
+
+■ ハッシュ登録時に計算結果を埋め込む
+  { rank: hero_rank(punch, kick, jump) }
+                                → メソッドの戻り値をそのままハッシュの値にできる
+
+■ こつ：while でバリデーションする理由
+  if だと1回しかチェックできない → ユーザーが何度でも再入力できるように while を使う
+
+■ PHP 対応メモ
+  while power > 100 でループ   → PHP でも while ($power > 100) で同じ構造
+  return "A" など               → PHP でも同じ書き方で動く
+
+============================================================
+
+
+【Rubyドリル 問題 59 戦闘力管理アプリケーションの作成3】
+
+
+
+追加仕様
+パンチ力,キック力,ジャンプ力の３つの力の合計を戦闘力とし、hero_rank メソッドを作成してABCDの４段階にランク分けします。（範囲は任意で構いません）
+
+ヒーローランクは、一覧表示で名前,パンチ力,キック力,ジャンプ力と一緒に表示されるようにします。
+
+
+
+
+ def register_data(power_data)
+    puts "名前を入力してください"
+    name = gets.chomp
+    puts "パンチ力を入力してください(0 ~ 100)"
+    punch = power(gets.to_i)
+    puts "キック力を入力してください(0 ~ 100)"
+    kick = power(gets.to_i)
+    puts "ジャンプ力を入力してください(0 ~ 100)"
+    jump = power(gets.to_i)
+
+    person = { name: name, punch: punch, kick: kick, jump: jump, rank: hero_rank(punch, kick, jump)}
+    power_data << person
+ end
+
+  def power(power)
+    while power > 100
+        puts "100以下の数字を入力してください"
+        power = gets.to_i
+    end
+        return power
+ end
+
+  def hero_rank(punch, kick, jump)
+    total = 0
+    total = punch + kick + jump
+    if total >= 300
+        return "A"
+    elsif total >= 200
+        return "B"
+    elsif total >= 100
+        return "C"
+    else
+        return "D"
+    end
+ end
+
+
+ def show_data_list(power_data)
+    puts "見たい人の番号を選択してください"
+    power_data.each_with_index do |person, index|
+        puts "#{index + 1}: #{person[:name]}"
+    end
+
+    input = gets.to_i
+    show_data(power_data[input - 1])
+ end
+
+ def show_data(person)
+    puts "名前: #{person[:name]}"
+    puts "パンチ力: #{person[:punch]}"
+    puts "キック力: #{person[:kick]}"
+    puts "ジャンプ力: #{person[:jump]}"
+    puts "ランク： #{person[:rank]}"
+ end
+
+
+
+power_data = []
+ while true
+    puts "選択してください"
+    puts "[0]データを確認する"
+    puts "[1]登録する"
+    puts "[2]終了する"
+    input = gets.to_i
+
+    if input == 0
+        show_data_list(power_data)
+    elsif input == 1
+        register_data(power_data)
+    elsif input == 2
+        exit
+    else
+        puts "無効な値です"
+    end
+ end
+
+
+【PHP版】
+
+function register_data(&$power_data) {
+    echo "名前を入力してください\n";
+    $name = trim(fgets(STDIN));
+    echo "パンチ力を入力してください(0 ~ 100)\n";
+    $punch = power(intval(trim(fgets(STDIN))));
+    echo "キック力を入力してください(0 ~ 100)\n";
+    $kick = power(intval(trim(fgets(STDIN))));
+    echo "ジャンプ力を入力してください(0 ~ 100)\n";
+    $jump = power(intval(trim(fgets(STDIN))));
+
+    $person = ['name' => $name, 'punch' => $punch, 'kick' => $kick, 'jump' => $jump, 'rank' => hero_rank($punch, $kick, $jump)];
+    $power_data[] = $person;
+}
+
+function power($power) {
+    while ($power > 100) {
+        echo "100以下の数字を入力してください\n";
+        $power = intval(trim(fgets(STDIN)));
+    }
+    return $power;
+}
+
+function hero_rank($punch, $kick, $jump) {
+    $total = $punch + $kick + $jump;
+    if ($total >= 300) {
+        return "A";
+    } elseif ($total >= 200) {
+        return "B";
+    } elseif ($total >= 100) {
+        return "C";
+    } else {
+        return "D";
+    }
+}
+
+function show_data_list($power_data) {
+    echo "見たい人の番号を選択してください\n";
+    foreach ($power_data as $index => $person) {
+        echo ($index + 1) . ": {$person['name']}\n";
+    }
+    $input = intval(trim(fgets(STDIN)));
+    show_data($power_data[$input - 1]);
+}
+
+function show_data($person) {
+    echo "名前: {$person['name']}\n";
+    echo "パンチ力: {$person['punch']}\n";
+    echo "キック力: {$person['kick']}\n";
+    echo "ジャンプ力: {$person['jump']}\n";
+    echo "ランク: {$person['rank']}\n";
+}
+
+
+$power_data = [];
+while (true) {
+    echo "選択してください\n";
+    echo "[0]データを確認する\n";
+    echo "[1]登録する\n";
+    echo "[2]終了する\n";
+
+    $input = intval(trim(fgets(STDIN)));
+
+    if ($input == 0) {
+        show_data_list($power_data);
+    } else if ($input == 1) {
+        register_data($power_data);
+    } else if ($input == 2) {
+        exit();
+    } else {
+        echo "無効な値です\n";
+    }
+}

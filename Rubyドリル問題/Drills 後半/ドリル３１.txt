@@ -1,0 +1,194 @@
+============================================================
+【このファイルで出てくる知識・メソッド・こつ まとめ】
+============================================================
+
+■ 入力値のバリデーション（検証）
+  def power(power)              → 入力値を受け取って検証する専用メソッドを作る
+  if power > 100                → 100 超えなら警告を出す
+  else return power             → 正常値はそのまま返す
+  punch = power(gets.to_i)      → 入力を検証メソッドに通してから変数に入れる
+
+■ バリデーションのこつ
+  入力と検証を分離する          → gets.to_i で受け取り → 別メソッドで検証 → 戻り値を使う
+  不正値のとき nil を返す       → 呼び出し元で nil チェックができる
+
+■ 「登録 → 一覧 → 詳細」の3層構造
+  register_data → power_data に追加
+  show_data_list → 一覧表示 → 番号入力
+  show_data → 詳細表示
+  この3つのメソッドが連携するパターンはよく使う
+
+■ PHP 対応メモ
+  &$power_data（参照渡し）      → PHP で配列を関数内で変更するとき必須
+  power() が null を返す場合    → PHP では if ($punch === null) でチェック
+
+============================================================
+
+
+【Rubyドリル 57 戦闘力管理アプリケーションの作成1】
+
+問題.1
+以下の雛形を使用して、アプリケーションを作成してください。
+作成する際、以下の仕様を確認してから実装してください。
+
+雛形
+def register_data
+ # 「登録する」を選択した場合の処理
+end
+
+def show_data_list
+ # 「データを確認する」を選択した場合の処理
+end
+
+while true
+ # アプリを実行した時に、選択肢が表示される処理
+ # 入力した値に応じて実行される処理
+end
+
+
+
+仕様
+・def register_dataメソッドで情報を入力させ、ハッシュに格納したあと、配列に格納するコードを書きましょう。
+　登録する情報は、名前,パンチ力,キック力,ジャンプ力です。
+　力は1~100までの数値で入力させます。
+　1~100以外の値が入力された場合は”100以下の数字を入力してください”と表示し、入力フェーズに戻るようにします。
+・show_data_listメソッドで、登録した情報から名前だけを取り出して一覧表示させましょう。
+
+表示例
+
+見たい人の番号を選択してください
+1: 山田
+2: 佐藤
+3: 佐々木
+番号が入力されたら、名前,パンチ力,キック力,ジャンプ力を一覧表示します。
+
+
+
+ def register_data(power_data)
+    puts "名前を入力してください"
+    name = gets.chomp
+    puts "パンチ力を入力してください(0 ~ 100)"
+    punch = power(gets.to_i)
+    puts "キック力を入力してください(0 ~ 100)"
+    kick = power(gets.to_i)
+    puts "ジャンプ力を入力してください(0 ~ 100)"
+    jump = power(gets.to_i)
+
+    person = { name: name, punch: punch, kick: kick, jump: jump }
+    power_data << person
+ end
+
+ def power(power)
+    if punch > 100
+        puts "100以下の数字を入力してください"
+    else
+        puts "無効な値です"
+    end
+ end
+
+ show_data_list(power_data)
+    puts "見たい人の番号を選択してください"
+    power_data.each_with_index do |person, index|
+        puts "#{index + 1}: #{person[:name]}
+
+    input = gets.to_i
+    show_data(power_data[input - 1])
+ end
+
+ def show_data(person)
+    puts "名前: #{person[:name]}"
+    puts "パンチ力: #{person[:punch]}"
+    puts "キック力: #{person[:kick]}"
+    puts "ジャンプ力: #{person[:jump]}"
+ end
+
+
+
+power_data = []
+ while true
+    puts "選択してください"
+    puts "[0]データを確認する"
+    puts "[1]登録する"
+    puts "[2]終了する"
+    input = gets.to_i
+
+    if input == 0
+        show_data(power_data)
+    elsif input == 1
+        register_data(power_data)
+    elsif input == 2
+        exit
+    else
+        puts "無効な値です"
+    end
+ end
+
+
+
+【PHP版】
+
+function register_data(&$power_data) {
+    echo "名前を入力してください\n";
+    $name = trim(fgets(STDIN));
+    echo "パンチ力を入力してください(0 ~ 100)\n";
+    $punch = power(intval(trim(fgets(STDIN))));
+    echo "キック力を入力してください(0 ~ 100)\n";
+    $kick = power(intval(trim(fgets(STDIN))));
+    echo "ジャンプ力を入力してください(0 ~ 100)\n";
+    $jump = power(intval(trim(fgets(STDIN))));
+
+    $person = ['name' => $name, 'punch' => $punch, 'kick' => $kick, 'jump' => $jump];
+    $power_data[] = $person;
+
+}
+
+
+function power($power) {
+    if ($power > 100) {
+        echo "100以下の数字を入力してください\n";
+        return null;
+    } else {
+        return $power;
+    }
+}
+
+function show_data_list($power_data) {
+    echo "見たい人の番号を入力してください\n";
+
+    foreach($power_data as $index => $person) {
+        echo ($index + 1) . ": {$person['name']}\n";
+        }
+
+    $input = intval(trim(fgets(STDIN)));
+    show_data($power_data[$input - 1]);
+
+}
+
+function show_data($person) {
+    echo "名前: {$person['name']}\n";
+    echo "パンチ力: {$person['punch']}\n";
+    echo "キック力: {$person['kick']}\n";
+    echo "ジャンプ力: {$person['jump']}\n";
+}
+
+
+$power_data = [];
+while (true) {
+    echo "選択してください\n";
+    echo "[0]データを確認する\n";
+    echo "[1]登録する\n";
+    echo "[2]終了する\n";
+
+    $input = intval(trim(fgets(STDIN)));
+
+    if ($input == 0) {
+        show_data_list($power_data);
+    } else if ($input == 1) {
+        register_data($power_data);
+    } else if ($input == 2) {
+        exit();
+    } else {
+        echo "無効な値です\n";
+    
+    }
+}

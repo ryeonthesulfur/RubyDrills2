@@ -1,0 +1,146 @@
+============================================================
+【このファイルで出てくる知識・メソッド・こつ まとめ】
+============================================================
+
+■ クラス変数で配列を管理する
+  @@foods = []                   → クラス変数として配列を持つ
+  @@foods << food                → どのメソッドからでも引数なしで追加できる
+  今まで: register_data(cart) → 引数で配列を持ち回る
+  今回: @@foods に直接追加 → 引数不要
+
+■ クラスメソッドでデータ操作
+  def self.input ... end         → Food.input で呼ぶクラスメソッド
+  def self.show_all_calory       → Food.show_all_calory で呼ぶ
+  インスタンスを作る処理もクラスメソッド内に書ける
+
+■ インスタンスを配列に入れるパターン
+  food = Food.new(name, calory)
+  @@foods << food                → ハッシュではなくインスタンスを配列に追加
+  @@foods.each do |food|
+    food.name / food.calory      → attr_reader でゲッターを使って取り出す
+
+■ カロリー合計の計算
+  all_calory = 0
+  all_calory += food.calory      → each の中でインスタンスの値を足し込む
+
+■ attr_reader の役割
+  attr_reader :name, :calory     → @name / @calory を外から読めるようにする
+  @@foods.each の中で food.name と書けるのは attr_reader があるから
+
+■ PHP 対応メモ
+  @@foods = []                   → PHP では private static $foods = []
+  @@foods << food                → PHP では self::$foods[] = $food
+  def self.input                 → PHP では public static function input()
+  Food.input                     → PHP では Food::input()
+
+============================================================
+
+【Rubyドリル 問題 69 クラスとインスタンスの問題】
+
+
+問題.1
+カロリー計算のプログラムをつくりましょう。以下のような仕様です。
+
+メニュー画面ではカロリーを入力か、カロリーの合計を見るか選べます
+カロリーを入力の場合、料理名とカロリーを入力します
+入力後はメニューに戻り、続けてカロリーを入力か、カロリーの合計を見るかを選べます
+カロリーの合計を見るを選んだら全ての料理名とカロリーを表示して、最後にカロリーの合計を表示します
+カロリーの合計を見たらプログラムを終了します
+メニュー画面
+
+
+ターミナル
+[0]:カロリーを入力する
+[1]:カロリーの合計を見る
+カロリー入力画面
+
+ターミナル
+料理名を入力してください:
+スパゲティ
+カロリーを入力してください:
+720
+カロリー合計表示画面
+
+ターミナル
+-----------------------------
+メロンパン  :430kcal
+スパゲティ  :720kcal
+バナナ  :80kcal
+-----------------------------
+カロリー合計  :1230kcal
+作ってもらうプログラムのひな形は以下です。
+
+-----------------------------
+-----------------------------
+今まで：
+cart = []          # メソッドの外に配列を用意
+post_item(cart)    # 引数として渡してた
+今回：
+
+
+class Dog
+  @@all_dogs = []  # クラス変数として配列を持つ
+
+  def initialize(name)
+    @@all_dogs << name  # 引数で渡さなくても直接追加できる
+  end
+end
+一番の違いは**「配列を引数で渡す必要がない」**こと。クラス変数はどのメソッドからでも @@ で直接アクセスできるので、
+今までみたいに register_data(data) みたいに引数で持ち回らなくていい。
+-----------------------------
+-----------------------------
+
+
+
+question3.rb
+
+  class Food
+    @@foods = []
+   attr_reader :name, :calory
+
+   def self.input
+    puts "料理名を入力してください"
+    name = gets.chomp
+    puts "カロリーを入力してください"
+    calory = gets.to_i
+
+    food = Food.new(name, calory)
+    @@foods << food
+   end
+
+   def self.show_all_calory
+    all_calory = 0
+    line =  "-----------------------------"
+    puts line
+
+    @@foods.each do |food|
+     puts "#{food.name} : #{food.calory}kcal"
+     all_calory += food.calory
+    end
+
+    puts line
+    puts "カロリー合計 : #{all_calory}kcal"
+   end
+
+    
+
+   def initialize(name, calory)
+    @name = name
+    @calory = calory
+   end
+end
+
+
+  while true do
+    puts "[0]:カロリーを入力する"
+    puts "[1]:カロリーの合計を見る"
+    input = gets.to_i
+
+    if input == 0
+      Food.input           # カロリーの入力
+    elsif input == 1
+      Food.show_all_calory # カロリーの合計を表示
+      exit
+    end
+  end
+

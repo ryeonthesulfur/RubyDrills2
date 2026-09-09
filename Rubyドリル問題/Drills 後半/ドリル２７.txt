@@ -1,0 +1,174 @@
+============================================================
+【このファイルで出てくる知識・メソッド・こつ まとめ】
+============================================================
+
+■ 平均値の計算パターン
+  total = 0
+  配列.each { |book| total += book[:price] }
+  average = total / 配列.length → 合計 ÷ 個数 で平均を出す
+  .round                        → 四捨五入（小数を整数に丸める）
+
+■ 配列.length の使い所
+  books.length                  → ハッシュを含む配列の要素数（本の冊数）を返す
+
+■ 別メソッドへの切り出し
+  def average_price(books)      → 平均計算を専用メソッドに切り出してスッキリさせる
+  show_books の中から呼ぶ       → average_price(books) で呼び出して使う
+
+■ round メソッド
+  数値.round                    → 四捨五入して整数を返す
+  数値.round(n)                 → 小数点 n 桁まで四捨五入
+
+■ PHP 対応メモ
+  配列.length                   → PHP では count($array)
+  .round                        → PHP では round($value)
+  total / books.length          → PHP では $total / count($books)
+
+============================================================
+
+
+【Rubyドリル 問題 52 書籍管理アプリケーションの作成2】
+
+今回追加する機能
+[1]を選択した場合、見たい番号を入力してくださいを出力する前の行に”保存された本の価格の平均”を追加する。
+
+表示例（数値やタイトルは任意）
+
+# 1を選択
+平均価格:1100円
+見たい番号を入力してください
+1: こころ
+2: 人間失格
+
+
+
+def register_book(books)
+  puts "著者を入力してください"
+  author = gets.chomp
+  puts "タイトルを入力してください"
+  title = gets.chomp
+  puts "価格を入力してください"
+  price = gets.chomp.to_i
+
+  book = { author: author, title: title, price: price }
+  books << book
+end
+
+def show_books(books)
+  puts "平均価格#{average_price(books)}"
+  puts "見たい番号を入力してください"
+  books.each_with_index do |book, index|
+    puts "#{index + 1}: #{book[:title]}"
+  end
+
+  input = gets.to_i
+  show_detail(book[input - 1])
+end
+
+def average_price(books)
+    total = 0
+    books.each do |book|
+    total += book[:price]
+    end
+    average = total / books.length #ハッシュまるまる一つ分を一つとして、その個数を数える。
+    return average.round
+end
+
+def show_detail(book)
+  puts "著者 #{data[:author]}"
+  puts "タイトル #{data[:title]}"
+  puts "価格 #{data[:price]}円"
+end
+
+books = []
+while true do
+
+  puts "番号を入力してください"
+  puts "0: 本を登録する"
+  puts "1: 本の一覧を見る"
+  puts "2: 終了する"
+
+  case gets.to_i
+  when 0
+    register_book(data)
+
+  when 1
+    show_books(data)
+
+  when 2
+    exit
+
+  else
+    puts '無効な値です'
+  end
+end
+
+
+
+
+
+
+
+【PHP版】
+
+function register_book(&$books) {
+    echo "著者を入力してください\n";
+    $author = trim(fgets(STDIN));
+    echo "タイトルを入力してください\n";
+    $title = trim(fgets(STDIN));
+    echo "価格を入力してください\n";
+    $price = trim(fgets(STDIN));
+
+    $book = ['author' => $author, 'title' => $title, 'price' => $price];
+    $books[] = $book;
+}
+
+function show_books($books) {
+    echo "平均価格{$average_price($books)}"
+    echo "見たい番号を入力してください\n";
+
+    foreach($books as $index => $book) {
+        echo ($index + 1) . ": {$book['title']}\n";
+    }
+
+    $input = intval(trim(fgets(STDIN)));
+    show_detail($book[$input - 1]);
+}
+
+function average_price($books) {
+    $total = 0;
+    foreach($books as $book) {
+        $total += $book['price'];
+        $average = round($total / count($books));
+    }
+    return $average;
+}
+
+function show_detail($book) {
+    echo "著者 {$data['author']}\n";
+    echo "タイトル {$data['title']}\n";
+    echo "価格 {$data['price']}円\n";
+}
+
+$books = [];
+while (true) {
+    echo "番号を入力してください\n";
+    echo "0: 本を登録する\n";
+    echo "1: 本の一覧を見る\n";
+    echo "2: 終了する\n";
+
+    $input = intval(trim(fgets(STDIN)));
+    switch ($input) {
+        case 0:
+            register_book($data);
+            break;
+        case 1:
+            show_books($data);
+            break;
+        case 2:
+            exit();
+            break;
+        default:
+            echo "無効な値です\n";
+    }
+}

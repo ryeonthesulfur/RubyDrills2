@@ -1,0 +1,223 @@
+============================================================
+【このファイルで出てくる知識・メソッド・こつ まとめ】
+============================================================
+
+■ 配列の検索
+  配列.include?(値)             → 配列に値が含まれるか（true/false）
+  [1,2,3].all? { |n| 配列.include?(n) }
+                                → 全て含まれるかを一行でチェックする別解
+
+■ 桁の取り出し
+  (num / 10) % 10               → 十の位を取り出す
+  num % 10                      → 一の位を取り出す
+
+■ 複数の戻り値
+  return tens_place, ones_place → Ruby はカンマ区切りで複数の値を返せる
+  X, Y = slice_num(input)       → 返ってきた複数の値を複数の変数で受け取る（多重代入）
+
+■ all? メソッド
+  配列.all? { |n| 条件 }        → 全要素が条件を満たすとき true を返す
+
+■ PHP 対応メモ
+  配列.include?(値)             → PHP では in_array(値, $配列)
+  return a, b（多値返却）       → PHP では return [$a, $b] で配列として返す
+                                   受け取りは [$X, $Y] = slice_num($input)
+  intval(trim(fgets(STDIN)))    → PHP での整数入力の受け取り方
+
+============================================================
+
+
+【Rubyドリル 問題 23 特定の数字を検知するプログラムの実装】
+
+
+問題.1
+概要
+本ドリルでは、特定の数字が存在するかどうかを判定するプログラムを実装します。
+
+問題
+以下の要件を満たすarray123メソッドを実装しましょう。
+
+配列内に1,2,3が全て入っている場合は、「True」と出力すること
+配列内に1,2,3の全てが入っていない場合は、「False」と出力すること
+
+雛形
+def array123(nums)
+  # 処理を記述
+end
+
+# 呼び出し例
+array123([1, 1, 2, 3, 1])
+出力例
+array123([1, 1, 2, 3, 1]) → True
+array123([1, 2, 4, ]) → False
+array123([1, 1, 2, 1, 4, 3]) → True
+
+
+
+ヒント
+include?メソッドを使用しましょう。
+
+include?メソッド
+include?メソッドは指定した値が、配列中に含まれているかを判定するメソッドです。指定した値が含まれている場合はtrueを、含まれていない場合はfalseを返り値として返します。
+
+
+array = ["foo", "bar"]
+puts array.include?("bar")
+#=> true
+puts array.include?("hoge")
+#=> false
+
+
+
+
+def array123(nums)
+  if nums.include?(1) && nums.include?(2) && nums.include?(3)
+    puts "True"
+  else
+    puts "False"
+  end
+end
+
+
+# 呼び出し例
+array123([1, 1, 2, 3, 1])
+
+
+【Ruby版 別解】
+
+def array123(nums)
+ if [1, 2, 3].all? {
+    |n| nums.include?(n)
+ }
+  puts "True" 
+ else
+  puts "False"
+ end
+end
+
+
+【PHP版】
+
+function array123($nums) {
+    if (in_array(1, $nums) && in_array(2, $nums) && in_array(3, $nums)) {
+        echo "True\n";
+    } else {
+        echo "False\n";
+    }
+}
+
+
+
+-----------------------------------------------------------------------------------
+【Rubyドリル 問題 25 簡単な計算を行うRubyプログラムの作成】
+
+問題
+二桁以上の整数を入力すると、十の位と一の位の数字の足し算、十の位と一の位の数字の掛け算をそれぞれ行い、
+最後に2つの結果を足し合わせて出力するプログラムをRubyで作成してください。
+
+ターミナルでの入力例
+
+sample.rb
+> 二桁の整数を入力してください
+> 15
+
+# 1 + 5と 1 * 5をそれぞれ計算
+
+> 足し算結果と掛け算結果の合計値は11です
+以下の雛形を参考にしましょう。
+
+
+def addition(a, b)
+  # 10の位と1の位の数字に対して、足し算を行う
+
+end
+
+
+def multiplication(a,b)
+  # 10の位と1の位の数字に対して、掛け算を行う
+
+end
+
+
+def slice_num(num)
+  # 10の位の計算
+
+  # 1の位の計算
+end
+
+puts "二桁の整数を入力してください"
+input = gets.to_i
+
+X, Y = slice_num(input)
+
+
+#  additionメソッドにX,Yを引数として渡し、処理結果を変数add_resultに代入する。
+
+#  multiplicationメソッドにX,Yを引数として渡し、処理結果を変数multiple_resultに代入する。
+
+puts "足し算結果と掛け算結果の合計値は#{add_result + multiple_result}です"
+
+
+
+def addition(a, b)
+  add_result = a + b
+
+  return add_result
+end
+
+
+def multiplication(a,b)
+  multiple_result = a * b 
+
+  return multiple_result
+end
+
+
+def slice_num(num)
+  tens_place = (num / 10) % 10
+  ones_place = num % 10
+
+  return tens_place, ones_place
+end
+
+
+
+puts "二桁の整数を入力してください"
+input = gets.to_i
+X, Y = slice_num(input)
+add_result = addition(X, Y)
+multiple_result = multiplication(X, Y)
+
+puts "足し算結果と掛け算結果の合計値は#{add_result + multiple_result}です"
+
+
+
+
+【PHP版】
+
+function addition($a, $b) {
+    $add_result = $a + $b;
+    return $add_result;
+}
+
+function multiplication($a, $b) {
+    $multiple_result = $a * $b;
+    return $multiple_result;
+}
+
+function slice_num($num) {
+    $tens_place = ($num / 10) % 10;
+    $ones_place = $num % 10;
+
+    return [$tens_place, $ones_place];
+}
+
+
+echo "二桁の整数を入力してください . \n";
+$input = intval(trim(fgets(STDIN)));
+[$X, $Y] = slice_num($input);
+$add_result = addition($X, $Y);
+$multiple_result = multiplication($X, $Y);
+$total = $add_result + $multiple_result;
+
+echo "足し算結果と掛け算結果の合計値は{$total}です\n";

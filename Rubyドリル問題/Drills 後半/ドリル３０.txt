@@ -1,0 +1,183 @@
+============================================================
+【このファイルで出てくる知識・メソッド・こつ まとめ】
+============================================================
+
+■ BMI の計算パターン
+  bmi = weight / tall_m / tall_m → 体重 ÷ 身長(m) ÷ 身長(m)
+  tall_m = tall / 100.0          → cm を m に変換（100.0 で割ると小数になる）
+
+■ ハッシュ登録時に計算を埋め込む
+  info = { bmi: calculate_bmi(tall, weight) }
+                                → 別メソッドの戻り値をそのままハッシュの値に入れられる
+
+■ to_f と to_i の使い分け
+  gets.to_f                     → 小数で受け取る（身長など）
+  gets.to_i                     → 整数で受け取る（体重・選択番号など）
+
+■ 処理の分離パターン
+  register_data → calculate_bmi → show_data_list → show_data
+                                → 各処理をメソッドに切り出して呼び合う構造
+
+■ PHP 対応メモ
+  tall / 100.0                  → PHP では $tall / 100（PHPは自動で小数になる）
+  bmi = weight / tall_m / tall_m → PHP でも同じ書き方で動く
+  &$data（参照渡し）            → PHP では配列を関数内で変更するとき必須
+
+============================================================
+
+
+【Rubyドリル 56 健康管理アプリケーションの作成3】
+
+
+追加機能
+BMIを計算して、一覧表示の際に追加表示する
+
+BMIの計算方法
+BMI=体重÷身長÷身長
+
+仕様
+・実行すると [0] : 登録する, [1] : データを確認する, [2] : 終了する という選択肢を表示し、ユーザーに入力を求め、その入力に従い以下のような処理を行う
+・ [0]の処理
+1. 名前、年齢、身長、体重を入力させる
+2. '身長と体重からBMIを割り出す' 名前、年齢、身長、体重、'BMI'を保存する
+・ [1]の処理
+1. 投稿された情報から番号と名前で一覧を表示し（例 [1]山田）、見たい個人の番号の入力を求める
+2. 入力された個人の名前、年齢、身長、体重、'BMI'を表示する
+・ [2]の処理
+1. アプリケーションを終了する
+・ [2]でアプリケーションを終了するまで、投稿や閲覧ができるように繰り返す
+
+
+
+
+def register_data(data)
+  puts "各情報を入力してください"
+  puts "名前を入力してください"
+  name = gets.chomp
+  puts "年齢を入力してください"
+  age = gets.chomp
+  puts "身長を入力してください"
+  tall = gets.to_f
+  puts "体重を入力してください"
+  weight = gets.to_i
+
+  info = { name: name, age: age, tall: tall, weight: weight, bmi: calculate_bmi(tall, weight)}
+   data << info
+end
+
+def calculate_bmi(tall, weight)
+    tall_m = tall / 100.0
+    bmi = weight / tall_m / tall_m
+end
+
+def show_data_list(data)
+  puts "見たい人の番号を選択してください"
+  data.each_with_index do |info, index|
+   puts "#{index + 1}: #{info[:name]}"
+  end
+
+   show_data(data[gets.to_i - 1])
+end
+
+def show_data(info) 
+    puts "名前: #{info[:name]}"
+    puts "年齢: #{info[:age]}"
+    puts "身長: #{info[:tall]}"
+    puts "体重: #{info[:weight]}"
+    puts "BMI: #{info[:bmi]}"
+end
+    
+
+data = []
+while true
+  puts "選択してください"
+  puts "[0]登録する"
+  puts "[1]データを確認する"
+  puts "[2]終了する"
+  input = gets.to_i
+
+  if input == 0
+    register_data(data)
+  elsif input == 1
+   show_data_list(data)
+  elsif input == 2
+    exit
+  else
+    puts "無効な値です"
+  end
+end
+
+
+
+【PHP版】
+
+function register_data(&$data) {
+    echo "各情報を入力してください\n";
+    echo "名前を入力してください\n";
+    $name = trim(fgets(STDIN));
+    echo "年齢を入力してください\n";
+    $age = trim(fgets(STDIN));
+    echo "身長を入力してください\n";
+    $tall = intval(trim(fgets(STDIN)));
+    echo "体重を入力してください\n";
+    $weight = intval(trim(fgets(STDIN)));
+
+    $info = ['name' => $name, 'age' => $age, 'tall' => $tall, 'weight' => $weight, 'bmi' => calculate_bmi($tall, $weight)];
+    $data[] = $info;
+}
+
+function calculate_bmi($tall, $weight) {
+    $tall_m = $tall / 100;
+    $bmi = $weight / $tall_m / $tall_m;
+    return $bmi;
+}
+
+function show_data_list($data) {
+    echo "見たい人の番号を選択してください\n";
+
+    foreach($data as $index => $info) {
+        echo ($index + 1) . ": {$info['name']}\n";
+    }
+    
+    $input = intval(trim(fgets(STDIN)));
+    show_data($data[$input - 1]);
+}
+
+
+function show_data($info) {
+    echo "名前: {$info['name']}\n";
+    echo "年齢: {$info['age']}\n";
+    echo "身長: {$info['tall']}\n";
+    echo "体重: {$info['weight']}\n";
+    echo "BMI: {$info['bmi']}\n";
+}
+
+
+$data = [];
+while (true) {
+    echo "選択してください\n";
+    echo "[0]登録する\n";
+    echo "[1]データを確認する\n";
+    echo "[2]終了する\n";
+
+    $input = intval(trim(fgets(STDIN)));
+
+    if ($input == 0) {
+        register_data($data);
+    } else if ($input == 1) {
+        show_data_list($data); 
+    } else if ($input == 2) {
+        exit();
+    } else {
+        echo "無効な値です\n";
+    } 
+}
+
+
+
+
+
+
+
+
+
